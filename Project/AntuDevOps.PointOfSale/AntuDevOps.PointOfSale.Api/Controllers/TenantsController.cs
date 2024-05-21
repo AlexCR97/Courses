@@ -7,19 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntuDevOps.PointOfSale.Api.Controllers;
 
 [ApiController]
-[Route("api/tenants")]
-public class TenantsController : ControllerBase
+[Route("[controller]")]
+public class TenantController : ControllerBase
 {
     private readonly ISender _sender;
 
-    public TenantsController(ISender sender)
+    public TenantController(ISender sender)
     {
         _sender = sender;
     }
 
     #region Tenant
 
-    [HttpPost("sign-up")]
+    [HttpPost("SignUp")]
     public async Task<SignedUpResponse> SignUp([FromBody] SignUpRequest request)
     {
         var result = await _sender.Send(request.ToCommand());
@@ -30,46 +30,47 @@ public class TenantsController : ControllerBase
 
     #region Products
 
-    [HttpPost("{tenantId:int}/products")]
-    public async Task<ProductId> CreateProduct([FromRoute] int tenantId, [FromBody] CreateProductRequest request)
+    [HttpPost("addProduct")]
+    public async Task<ProductId> CreateProduct([FromBody] CreateProductRequest request)
     {
-        var productId = await _sender.Send(request.ToCommand(
-            tenantId,
-            "Unknown" // TODO Pass username
-            ));
-
+        var productId = await _sender.Send(request.ToCommand("Unknown"));
         return productId;
     }
 
-    [HttpGet("{tenantId:int}/products")]
-    public async Task<IReadOnlyList<ProductListResponse>> FindProducts([FromRoute] int tenantId)
+    [HttpGet("{tenantId:int}/products/list")]
+    public async Task<IReadOnlyList<ProductListResponse>> FindProducts()
     {
-        // TODO Use tenantId to filter results
-
         var products = await _sender.Send(new FindProductsQuery());
 
         return products
-            .Select(x => x.ToResponse())
+            .Select(x => x.ToListResponse())
             .ToList();
     }
 
-    [HttpPut("{tenantId:int}/products/{productId:int}")]
-    public async Task UpdateProduct([FromRoute] int tenantId, [FromRoute] int productId, [FromBody] UpdateProductRequest request)
+    [HttpGet("{tenantId:int}/product/{productId:int}")]
+    public async Task<ProductProfileResponse> GetProduct(int productId)
     {
-        // TODO Use tenantId to verify that Product belongs to Tenant
+        var product = await _sender.Send(new GetProductQuery(new ProductId(productId)));
 
-        await _sender.Send(request.ToCommand(
-            productId,
-            "Unknown" // TODO Pass username
-            ));
+        return product.ToProfileResponse();
     }
 
-    [HttpDelete("{tenantId:int}/products/{productId:int}")]
+    [HttpPost("update_product")]
+    public async Task UpdateProduct([FromBody] UpdateProductRequest request)
+    {
+        await _sender.Send(request.ToCommand("Unknown"));
+    }
+
+    [HttpDelete("{tenantId:int}/{productId:int}/products")]
     public async Task DeleteProduct([FromRoute] int tenantId, [FromRoute] int productId)
     {
-        // TODO Use tenantId to verify that Product belongs to Tenant
-
         await _sender.Send(new DeleteProductCommand(new ProductId(productId)));
+    }
+
+    [HttpPut("product/{productId:int}/upload-image")]
+    public Task UploadProductImage([FromForm] IFormFile file)
+    {
+        return Task.CompletedTask;
     }
 
     #endregion

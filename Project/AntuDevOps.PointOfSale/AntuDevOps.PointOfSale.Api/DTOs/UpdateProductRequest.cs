@@ -4,13 +4,14 @@ using AntuDevOps.PointOfSale.Domain.Models;
 namespace AntuDevOps.PointOfSale.Api.DTOs;
 
 public record UpdateProductRequest(
+    int ProductId,
     string Code,
     string? DisplayName)
 {
-    internal UpdateProductCommand ToCommand(int productId, string lastModifiedBy)
+    internal UpdateProductCommand ToCommand(string lastModifiedBy)
     {
         return new UpdateProductCommand(
-            new ProductId(productId),
+            new ProductId(ProductId),
             Code,
             DisplayName,
             lastModifiedBy);
