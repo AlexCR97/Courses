@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntuDevOps.PointOfSale.Api", "AntuDevOps.PointOfSale.Api\AntuDevOps.PointOfSale.Api.csproj", "{CE33FBC4-7D09-443D-A01C-F8588321FBED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{0835D49F-24A6-43E8-95F9-E4EC902FE17F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntuDevOps.PointOfSale.Domain", "AntuDevOps.PointOfSale.Domain\AntuDevOps.PointOfSale.Domain.csproj", "{35721E51-E909-4175-8EB7-DC02C045099E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntuDevOps.PointOfSale.Application", "AntuDevOps.PointOfSale.Application\AntuDevOps.PointOfSale.Application.csproj", "{17B5A3AC-700B-4836-90EB-F966858D7F94}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntuDevOps.PointOfSale.Infrastructure", "AntuDevOps.PointOfSale.Infrastructure\AntuDevOps.PointOfSale.Infrastructure.csproj", "{3DD4B34B-A3DD-44CE-8DB1-38AE46BCFA2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B8AC080-10B4-46D7-BB7F-D06B3D67D809}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE33FBC4-7D09-443D-A01C-F8588321FBED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE33FBC4-7D09-443D-A01C-F8588321FBED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE33FBC4-7D09-443D-A01C-F8588321FBED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE33FBC4-7D09-443D-A01C-F8588321FBED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35721E51-E909-4175-8EB7-DC02C045099E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35721E51-E909-4175-8EB7-DC02C045099E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35721E51-E909-4175-8EB7-DC02C045099E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35721E51-E909-4175-8EB7-DC02C045099E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B5A3AC-700B-4836-90EB-F966858D7F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B5A3AC-700B-4836-90EB-F966858D7F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B5A3AC-700B-4836-90EB-F966858D7F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B5A3AC-700B-4836-90EB-F966858D7F94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DD4B34B-A3DD-44CE-8DB1-38AE46BCFA2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD4B34B-A3DD-44CE-8DB1-38AE46BCFA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD4B34B-A3DD-44CE-8DB1-38AE46BCFA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD4B34B-A3DD-44CE-8DB1-38AE46BCFA2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CE33FBC4-7D09-443D-A01C-F8588321FBED} = {0835D49F-24A6-43E8-95F9-E4EC902FE17F}
+		{35721E51-E909-4175-8EB7-DC02C045099E} = {0835D49F-24A6-43E8-95F9-E4EC902FE17F}
+		{17B5A3AC-700B-4836-90EB-F966858D7F94} = {0835D49F-24A6-43E8-95F9-E4EC902FE17F}
+		{3DD4B34B-A3DD-44CE-8DB1-38AE46BCFA2D} = {0835D49F-24A6-43E8-95F9-E4EC902FE17F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9DE11470-18D0-4BAB-8A80-E05C200CF812}
+	EndGlobalSection
+EndGlobal

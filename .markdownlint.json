@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint/v0.34.0/schema/markdownlint-config-schema.json",
+  "default": true,
+  "line-length": {
+    "line_length": 400,
+    "code_blocks": false,
+    "headings": false,
+    "stern": false,
+    "strict": true,
+    "tables": true
+  },
+  "no-inline-html": {
+    "allowed_elements": [
+      "img"
+    ]
+  }
+}

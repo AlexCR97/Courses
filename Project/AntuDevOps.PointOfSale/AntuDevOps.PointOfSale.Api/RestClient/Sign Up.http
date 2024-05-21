@@ -1,0 +1,11 @@
+POST {{apiUrl}}/sign-up
+Content-Type: application/json
+
+{
+  "tenantName": "Global Tenant",
+  "role": "Owner",
+  "email": "pablo.castillo@antudevops.com",
+  "password": "123Qwe",
+  "firstName": "Pablo",
+  "lastName": "Castillo"
+}

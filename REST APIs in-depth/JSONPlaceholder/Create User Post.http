@@ -1,0 +1,7 @@
+POST https://jsonplaceholder.typicode.com/users/1/posts
+Content-Type: application/json
+
+{
+  "title": "My Custom Post",
+  "body": "This is my custom post."
+}
