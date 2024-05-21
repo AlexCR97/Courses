@@ -1,13 +1,16 @@
 using AntuDevOps.PointOfSale.Api.DTOs;
 using AntuDevOps.PointOfSale.Application.Products;
 using AntuDevOps.PointOfSale.Domain.Models;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntuDevOps.PointOfSale.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[ApiVersion(1)]
+[ApiVersion(2)]
+[Route("api/v{v:apiVersion}/[controller]")]
 public class TenantController : ControllerBase
 {
     private readonly ISender _sender;
@@ -24,6 +27,26 @@ public class TenantController : ControllerBase
     {
         var result = await _sender.Send(request.ToCommand());
         return result.ToResponse();
+    }
+
+    [MapToApiVersion(1)]
+    [HttpGet("{tenantId:int}/Profile")]
+    public async Task<object> GetTenantProfileV1()
+    {
+        return Ok(new
+        {
+            Version = 1,
+        });
+    }
+
+    [MapToApiVersion(2)]
+    [HttpGet("{tenantId:int}/Profile")]
+    public async Task<object> GetTenantProfileV2()
+    {
+        return Ok(new
+        {
+            Version = 2,
+        });
     }
 
     #endregion

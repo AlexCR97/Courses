@@ -58,6 +58,8 @@ Version: v3
 - <https://www.postman.com/api-platform/api-versioning/>
 - <https://semver.org/>
 - <https://www.pluralsight.com/resources/blog/guides/introduction-to-semantic-versioning>
+- <https://www.milanjovanovic.tech/blog/api-versioning-in-aspnetcore>
+- <https://medium.com/@seldah/managing-multiple-versions-of-your-api-with-net-and-swagger-47b4143e8bf5>
 
 ### Other Sections
 
