@@ -1,3 +1,4 @@
+using AntuDevOps.PointOfSale.Api.OAuth;
 using AntuDevOps.PointOfSale.Application.DependencyInjection;
 using AntuDevOps.PointOfSale.Infrastructure.DependencyInjection;
 
@@ -9,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services
+    .AddJwtService(builder.Configuration)
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
