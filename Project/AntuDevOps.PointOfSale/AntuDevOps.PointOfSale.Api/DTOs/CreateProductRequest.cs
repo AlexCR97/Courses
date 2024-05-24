@@ -7,7 +7,7 @@ public record CreateProductRequest(
     string Code,
     string? DisplayName)
 {
-    internal CreateProductCommand ToCommand(int tenantId, string createdBy)
+    internal CreateProductCommand ToCommand(string createdBy, int tenantId)
     {
         return new CreateProductCommand(
             new TenantId(tenantId),

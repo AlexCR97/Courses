@@ -2,7 +2,7 @@
 
 namespace AntuDevOps.PointOfSale.Api.DTOs;
 
-public record ProductListResponse(
+public record ProductProfileResponse(
     int Id,
     DateTime CreatedAt,
     string CreatedBy,
@@ -12,11 +12,11 @@ public record ProductListResponse(
     string Code,
     string? DisplayName);
 
-internal static class ProductListResponseExtensions
+internal static class ProductProfileResponseExtensions
 {
-    public static ProductListResponse ToListResponse(this Product model)
+    public static ProductProfileResponse ToProfileResponse(this Product model)
     {
-        return new ProductListResponse(
+        return new ProductProfileResponse(
             model.Id.Value,
             model.CreatedAt,
             model.CreatedBy,

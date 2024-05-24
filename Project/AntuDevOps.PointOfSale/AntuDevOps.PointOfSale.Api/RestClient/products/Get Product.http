@@ -1,0 +1,4 @@
+@productId = 3
+
+GET {{apiUrl}}/{{tenantId}}/products
+Content-Type: application/json
