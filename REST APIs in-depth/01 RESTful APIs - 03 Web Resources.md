@@ -56,6 +56,11 @@ DELETE /orders/{orderId}/line-items/{lineItemId}  Remove a line item from the or
 GET    /orders/{orderId}/status                   Retrieve the order's status.
 POST   /orders/{orderId}/submission               Submit the order.
 POST   /orders/{orderId}/cancellation             Cancel the order.
+
+PUT    /users/{userId}                            Update the entire user's profile.
+PATCH  /users/{userId}                            Update a portion of the user's profile.
+PUT    /users/{userId}/username                   Set the user's username.
+PATCH  /users/{userId}/username                   Set the user's username.
 ```
 
 Bad examples:
@@ -63,7 +68,7 @@ Bad examples:
 ```text
 POST /orders/create
 GET  /orders/list
-POST /orders/list
+POST /orders/list { page: 1, size: 10 } (using POST as a GET is terrible!)
 GET  /order/{orderId}
 GET  /orders/line-items/{orderId}
 POST /orders/{orderId}/submit
@@ -84,16 +89,13 @@ Commonly used content types:
 
 | Content Type                      | MIME Type   | Description                      |
 | --------------------------------- | ----------- | -------------------------------- |
-| application/octet-stream          | .bin        | Any kind of binary data          |
+| application/octet-stream          |             | Any kind of binary data          |
 | application/json                  | .json       | JSON                             |
 | application/x-www-form-urlencoded |             | Key-Value pairs                  |
 | application/pdf                   | .pdf        | Portable Document Format (PDF)   |
 | application/zip                   | .zip        | ZIP archive                      |
-| image/gif                         | .gif        | GIF image                        |
 | image/jpeg                        | .jpg, .jpeg | JPEG image                       |
 | image/png                         | .png        | PNG image                        |
-| image/svg+xml                     | .svg        | SVG image                        |
-| image/webp                        | .webp       | WEBP image                       |
 | multipart/form-data               |             | Form data                        |
 | text/css                          | .css        | Cascading Style Sheets (CSS)     |
 | text/csv                          | .csv        | Comma-separated values (CSV)     |

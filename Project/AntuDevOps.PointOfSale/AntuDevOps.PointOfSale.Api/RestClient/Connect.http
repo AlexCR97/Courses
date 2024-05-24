@@ -1,0 +1,10 @@
+@tenantId = 2
+@email = pablo.castillo@antudevops.com
+@password = 123Qwe
+
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+tenantId={{tenantId}}
+&email={{email}}
+&password={{password}}

@@ -7,7 +7,7 @@ public record UpdateProductRequest(
     string Code,
     string? DisplayName)
 {
-    internal UpdateProductCommand ToCommand(int productId, string lastModifiedBy)
+    internal UpdateProductCommand ToCommand(string lastModifiedBy, int productId)
     {
         return new UpdateProductCommand(
             new ProductId(productId),
