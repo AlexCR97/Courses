@@ -62,3 +62,7 @@ By the end of this course, students will be able to:
   - Convert Controllers to Endpoints
   - Carter
   - FastEndpoints
+
+## Other Sections
+
+- Next: [What is a REST API?](./01%20RESTful%20APIs%20-%2001%20What%20is%20a%20REST%20API.md)

@@ -84,16 +84,13 @@ Commonly used content types:
 
 | Content Type                      | MIME Type   | Description                      |
 | --------------------------------- | ----------- | -------------------------------- |
-| application/octet-stream          | .bin        | Any kind of binary data          |
+| application/octet-stream          |             | Any kind of binary data          |
 | application/json                  | .json       | JSON                             |
 | application/x-www-form-urlencoded |             | Key-Value pairs                  |
 | application/pdf                   | .pdf        | Portable Document Format (PDF)   |
 | application/zip                   | .zip        | ZIP archive                      |
-| image/gif                         | .gif        | GIF image                        |
 | image/jpeg                        | .jpg, .jpeg | JPEG image                       |
 | image/png                         | .png        | PNG image                        |
-| image/svg+xml                     | .svg        | SVG image                        |
-| image/webp                        | .webp       | WEBP image                       |
 | multipart/form-data               |             | Form data                        |
 | text/css                          | .css        | Cascading Style Sheets (CSS)     |
 | text/csv                          | .csv        | Comma-separated values (CSV)     |
