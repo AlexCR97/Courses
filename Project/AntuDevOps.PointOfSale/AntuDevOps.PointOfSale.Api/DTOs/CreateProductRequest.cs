@@ -4,14 +4,13 @@ using AntuDevOps.PointOfSale.Domain.Models;
 namespace AntuDevOps.PointOfSale.Api.DTOs;
 
 public record CreateProductRequest(
-    int TenantId,
     string Code,
     string? DisplayName)
 {
-    internal CreateProductCommand ToCommand(string createdBy)
+    internal CreateProductCommand ToCommand(string createdBy, int tenantId)
     {
         return new CreateProductCommand(
-            new TenantId(TenantId),
+            new TenantId(tenantId),
             Code,
             DisplayName,
             createdBy);
