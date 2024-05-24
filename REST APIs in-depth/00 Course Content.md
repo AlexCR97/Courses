@@ -1,57 +1,64 @@
 # Course Content
 
-## RESTful APIs
+## Description
 
-- What is a REST API?
-- The HTTP protocol
-- Web Resources
-- Status Codes
-- Versioning
+This course will teach students the foundational concepts and principles necessary for designing, developing and managing robust RESTful APIs that meet industry standards and best practices.
 
-## "Find" requests
+## Objectives
 
-- Pagination
-- Sorting
-- Filtering
+By the end of this course, students will be able to:
 
-## Errors
+- Understand and apply REST principles.
+- Optimize requests using standard practices.
+- Handle errors effectively.
+- Leverage API observability.
+- Document APIs.
+- Discover other interesting API-related topics.
+- Modernize code bases to use minimal APIs.
 
-- Types of errors
-  - Domain errors
-  - Application errors (Server side validation)
-  - Infrastructure errors
-- Handling errors
-  - Global Error Handler
-  - Result Pattern
-- Problem Details
+## Topics
 
-## Observability
+- RESTful APIs
+  - What is a REST API?
+  - The HTTP protocol
+  - Web Resources
+  - Status Codes
+  - Versioning
+- "Find" requests
+  - Pagination
+  - Sorting
+  - Filtering
+- Errors
 
-- Logging
-  - Structured Logging
-  - Serilog
-  - Enrichers
-  - Sinks
-- Tracing
-- Metrics
-- Open Telemetry
+  - Types of errors
+    - Domain errors
+    - Application errors (Server side validation)
+    - Infrastructure errors
+  - Handling errors
+    - Global Error Handler
+    - Result Pattern
+  - Problem Details
 
-## Swagger
-
-- Open API
-- Swagger UI
-- Swagger Codegen
-
-## Misc
-
-- HttpClient
-- Caching
-- Multi-Tenancy
-- OData
-- JSON API
-
-## Minimal APIs
-
-- Convert Controllers to Endpoints
-- Carter
-- FastEndpoints
+- Observability
+  - Logging
+    - Structured Logging
+    - Serilog
+    - Enrichers
+    - Sinks
+  - Tracing
+  - Metrics
+  - Open Telemetry
+- Swagger
+  - Open API
+  - Swagger UI
+  - Swagger Codegen
+- Misc
+  - HttpClient
+  - Caching
+  - Multi-Tenancy
+  - OData
+  - JSON API
+- Minimal APIs
+  - Convert Controllers to Endpoints
+  - Carter
+  - FastEndpoints
