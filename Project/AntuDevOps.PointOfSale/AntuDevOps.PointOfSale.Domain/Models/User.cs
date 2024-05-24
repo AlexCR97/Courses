@@ -38,6 +38,11 @@ public class User : AggregateRoot<UserId>
             firstName,
             lastName);
     }
+
+    public UserTenant? GetTenantOrDefault(TenantId id)
+    {
+        return Tenants.FirstOrDefault(x => x.TenantId == id);
+    }
 }
 
 public class UserTenant

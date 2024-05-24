@@ -1,4 +1,5 @@
 using AntuDevOps.PointOfSale.Api.ApiVersioning;
+using AntuDevOps.PointOfSale.Api.OAuth;
 using AntuDevOps.PointOfSale.Application.DependencyInjection;
 using AntuDevOps.PointOfSale.Infrastructure.DependencyInjection;
 using Asp.Versioning.ApiExplorer;
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCustomApiVersioning();
 
 builder.Services
+    .AddJwtService(builder.Configuration)
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
