@@ -1,0 +1,5 @@
+@offset = 0
+@limit = 3
+
+GET https://pokeapi.co/api/v2/pokemon?offset={{offset}}&limit={{limit}}
+Content-Type: application/json

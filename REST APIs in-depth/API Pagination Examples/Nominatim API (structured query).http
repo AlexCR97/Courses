@@ -1,0 +1,5 @@
+@country = Mexico
+@state = Jalisco
+
+GET https://nominatim.openstreetmap.org/search?format=jsonv2&country={{country}}&state={{state}}
+Content-Type: application/json

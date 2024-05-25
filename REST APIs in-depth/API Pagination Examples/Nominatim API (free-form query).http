@@ -1,0 +1,4 @@
+@q = Mexico
+
+GET https://nominatim.openstreetmap.org/search?format=jsonv2&q={{q}}
+Content-Type: application/json
