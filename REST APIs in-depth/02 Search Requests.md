@@ -1,5 +1,7 @@
 # Search Requests
 
+> **_Status Codes exercise!_**
+
 ## Pagination
 
 ### What is API pagination?
