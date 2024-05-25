@@ -50,11 +50,14 @@ internal class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<User>> FindAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<User>> FindAsync(IFindQuery query, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var userEntities = await _dbContext.Users.ToListAsync(cancellationToken);
+        var userEntities = await _dbContext.Users
+            .AsQueryable()
+            .Paginate(query)
+            .ToListAsync(cancellationToken);
 
         var mapTasks = userEntities.Select(userEntity => ToModelAsync(userEntity, cancellationToken));
 

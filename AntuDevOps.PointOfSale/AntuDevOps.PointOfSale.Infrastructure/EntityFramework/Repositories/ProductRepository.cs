@@ -41,11 +41,14 @@ internal class ProductRepository : IProductRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Product>> FindAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Product>> FindAsync(IFindQuery query, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var entities = await _dbContext.Products.ToListAsync(cancellationToken);
+        var entities = await _dbContext.Products
+            .AsQueryable()
+            .Paginate(query)
+            .ToListAsync(cancellationToken);
 
         return entities
             .Select(entity => entity.ToModel())

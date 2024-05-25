@@ -1,19 +1,16 @@
 ﻿using AntuDevOps.PointOfSale.Domain.Models;
 using AntuDevOps.PointOfSale.Domain.Repositories;
-using FluentValidation;
 using MediatR;
 
 namespace AntuDevOps.PointOfSale.Application.Products;
 
-public record FindProductsQuery
-    : IRequest<IReadOnlyList<Product>>;
-
-internal class FindProductsQueryValidator : AbstractValidator<FindProductsQuery>
-{
-    public FindProductsQueryValidator()
-    {
-    }
-}
+public record FindProductsQuery(
+    TenantId TenantId,
+    int Page = FindQuery.PageDefault,
+    int Size = FindQuery.SizeDefault,
+    Sort? Sort = null,
+    string? Search = null)
+    : FindQuery(Page, Size, Sort, Search), IRequest<IReadOnlyList<Product>>;
 
 internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IReadOnlyList<Product>>
 {
@@ -28,8 +25,8 @@ internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IRe
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        new FindProductsQueryValidator().ValidateAndThrow(request);
+        // TODO Use TenantId
 
-        return await _productRepository.FindAsync(cancellationToken);
+        return await _productRepository.FindAsync(request, cancellationToken);
     }
 }

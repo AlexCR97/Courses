@@ -1,13 +1,14 @@
 using AntuDevOps.PointOfSale.Api.DTOs;
 using AntuDevOps.PointOfSale.Application.Products;
 using AntuDevOps.PointOfSale.Domain.Models;
+using AntuDevOps.PointOfSale.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntuDevOps.PointOfSale.Api.Controllers;
 
 [ApiController]
-[Route("tenants")]
+[Route("api/tenants")]
 public class TenantsController : ControllerBase
 {
     private readonly ISender _sender;
@@ -43,11 +44,19 @@ public class TenantsController : ControllerBase
     }
 
     [HttpGet("{tenantId:int}/products")]
-    public async Task<IReadOnlyList<ProductListResponse>> FindProducts([FromRoute] int tenantId)
+    public async Task<IReadOnlyList<ProductListResponse>> FindProducts(
+        [FromRoute] int tenantId,
+        [FromQuery] int page = FindQuery.PageDefault,
+        [FromQuery] int size = FindQuery.SizeDefault,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? search = null)
     {
         var products = await _sender.Send(new FindProductsQuery(
-            // TODO use tenantId
-            ));
+            new TenantId(tenantId),
+            page,
+            size,
+            Sort.ParseOrDefault(sort),
+            search));
 
         return products
             .Select(x => x.ToListResponse())
