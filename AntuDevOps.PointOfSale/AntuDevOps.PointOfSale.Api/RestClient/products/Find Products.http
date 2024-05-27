@@ -1,2 +1,5 @@
-GET {{apiUrl}}/{{tenantId}}/products
+@page = 1
+@size = 2
+
+GET {{apiUrl}}/{{tenantId}}/products?page={{page}}&size={{size}}
 Content-Type: application/json

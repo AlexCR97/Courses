@@ -63,6 +63,17 @@ internal class ProductRepository : IProductRepository
             ?? throw new InvalidOperationException($"No such Product with Id={id}");
     }
 
+    public async Task<Product?> GetByCodeOrDefaultAsync(string code, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var entity = await _dbContext.Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+
+        return entity?.ToModel();
+    }
+
     public async Task<Product?> GetOrDefaultAsync(ProductId id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
