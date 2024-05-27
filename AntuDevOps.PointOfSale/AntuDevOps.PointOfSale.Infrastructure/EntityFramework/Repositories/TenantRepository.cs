@@ -47,7 +47,7 @@ internal class TenantRepository : ITenantRepository
 
         var entities = await _dbContext.Tenants
             .AsQueryable()
-            .Paginate(query)
+            .Find(query)
             .ToListAsync(cancellationToken);
 
         return entities

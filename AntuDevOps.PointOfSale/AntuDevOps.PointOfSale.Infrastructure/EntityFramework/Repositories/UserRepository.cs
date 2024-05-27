@@ -56,7 +56,7 @@ internal class UserRepository : IUserRepository
 
         var userEntities = await _dbContext.Users
             .AsQueryable()
-            .Paginate(query)
+            .Find(query)
             .ToListAsync(cancellationToken);
 
         var mapTasks = userEntities.Select(userEntity => ToModelAsync(userEntity, cancellationToken));

@@ -10,7 +10,8 @@ public record FindProductsQuery(
     int Size = FindQuery.SizeDefault,
     Sort? Sort = null,
     string? Search = null)
-    : FindQuery(Page, Size, Sort, Search), IRequest<IReadOnlyList<Product>>;
+    : FindQuery(Page, Size, Sort, Search)
+    , IRequest<IReadOnlyList<Product>>;
 
 internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IReadOnlyList<Product>>
 {

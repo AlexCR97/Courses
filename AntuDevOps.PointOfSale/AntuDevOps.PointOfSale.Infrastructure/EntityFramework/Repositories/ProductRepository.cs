@@ -47,7 +47,7 @@ internal class ProductRepository : IProductRepository
 
         var entities = await _dbContext.Products
             .AsQueryable()
-            .Paginate(query)
+            .Find(query)
             .ToListAsync(cancellationToken);
 
         return entities
