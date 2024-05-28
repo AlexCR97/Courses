@@ -17,21 +17,6 @@ API Pagination is a technique used in API design to retrieve large data sets in 
 - Scalability and flexibility
 - Error handling
 
-**Real-world uses of pagination:**
-
-- LinkedIn uses pagination to retrieve posts and comments.
-- Amazon uses pagination to retrieve product listings, search results and user reviews.
-- Banking apps use pagination to retrieve transaction history.
-- Job search platforms like Indeed or LinkedIn Jobs offer paginated APIs for retrieving job listings based on various criteria such as location, industry, or keywords.
-
-**Real-world APIs that use search requests:**
-
-- <https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user>
-- <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-search-api-example>
-- <https://developers.google.com/photos/library/reference/rest/v1/albums/list>
-- <https://pokeapi.co/docs/v2#resource-listspagination-section>
-- <https://nominatim.org/>
-
 ### Common API pagination techniques
 
 ```text
@@ -115,6 +100,23 @@ GET /api/posts?search=funny cats
 
 GET /api/posts?term=funny cats
 ```
+
+## Real-world usage
+
+**Real-world uses of pagination:**
+
+- LinkedIn uses pagination to retrieve posts and comments.
+- Amazon uses pagination to retrieve product listings, search results and user reviews.
+- Banking apps use pagination to retrieve transaction history.
+- Job search platforms like Indeed or LinkedIn Jobs offer paginated APIs for retrieving job listings based on various criteria such as location, industry, or keywords.
+
+**Real-world APIs that use pagination:**
+
+- <https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user>
+- <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-search-api-example>
+- <https://developers.google.com/photos/library/reference/rest/v1/albums/list>
+- <https://pokeapi.co/docs/v2#resource-listspagination-section>
+- <https://nominatim.org/>
 
 ## References
 

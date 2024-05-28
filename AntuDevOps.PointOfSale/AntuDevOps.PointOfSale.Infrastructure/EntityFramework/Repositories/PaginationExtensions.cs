@@ -1,4 +1,5 @@
 ﻿using AntuDevOps.PointOfSale.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 
 namespace AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Repositories;
@@ -32,5 +33,33 @@ internal static class PaginationExtensions
         return queryable
             .Skip((page - 1) * size)
             .Take(size);
+    }
+
+    public static async Task<Domain.Repositories.PagedResult<T>> ToPagedResultAsync<T>(
+        this IQueryable<T> queryable,
+        IFindQuery findQuery,
+        DbSet<T> dbSet,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var results = await queryable.ToListAsync(cancellationToken);
+
+        var totalCount = await dbSet
+            .Search(findQuery.Search)
+            .LongCountAsync(cancellationToken);
+
+        var totalPages = (int)(totalCount / findQuery.Size);
+
+        return new Domain.Repositories.PagedResult<T>(
+            results,
+            new PaginationMetadata(
+                CurrentPage: findQuery.Page,
+                CurrentSize: findQuery.Size,
+                NextPage: findQuery.Page + 1,
+                PrevPage: findQuery.Page == 1 ? null : findQuery.Page - 1,
+                TotalPages: totalPages,
+                TotalCount: totalCount));
     }
 }

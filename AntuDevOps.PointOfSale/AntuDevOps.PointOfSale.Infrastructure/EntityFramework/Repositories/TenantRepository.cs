@@ -41,18 +41,16 @@ internal class TenantRepository : ITenantRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Tenant>> FindAsync(IFindQuery query, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Tenant>> FindAsync(IFindQuery query, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var entities = await _dbContext.Tenants
+        var pagedResult = await _dbContext.Tenants
             .AsQueryable()
             .Find(query)
-            .ToListAsync(cancellationToken);
+            .ToPagedResultAsync(query, _dbContext.Tenants, cancellationToken);
 
-        return entities
-            .Select(entity => entity.ToModel())
-            .ToList();
+        return pagedResult.Map(entity => entity.ToModel());
     }
 
     public async Task<Tenant> GetAsync(TenantId id, CancellationToken cancellationToken = default)

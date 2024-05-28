@@ -11,9 +11,9 @@ public record FindProductsQuery(
     Sort? Sort = null,
     string? Search = null)
     : FindQuery(Page, Size, Sort, Search)
-    , IRequest<IReadOnlyList<Product>>;
+    , IRequest<PagedResult<Product>>;
 
-internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IReadOnlyList<Product>>
+internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, PagedResult<Product>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -22,7 +22,7 @@ internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IRe
         _productRepository = productRepository;
     }
 
-    public async Task<IReadOnlyList<Product>> Handle(FindProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<Product>> Handle(FindProductsQuery request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

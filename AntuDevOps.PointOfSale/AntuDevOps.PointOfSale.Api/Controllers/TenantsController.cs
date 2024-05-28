@@ -44,7 +44,7 @@ public class TenantsController : ControllerBase
     }
 
     [HttpGet("{tenantId:int}/products")]
-    public async Task<IReadOnlyList<ProductListResponse>> FindProducts(
+    public async Task<PagedResult<ProductListResponse>> FindProducts(
         [FromRoute] int tenantId,
         [FromQuery] int page = FindQuery.PageDefault,
         [FromQuery] int size = FindQuery.SizeDefault,
@@ -58,9 +58,7 @@ public class TenantsController : ControllerBase
             Sort.ParseOrDefault(sort),
             search));
 
-        return products
-            .Select(x => x.ToListResponse())
-            .ToList();
+        return products.Map(x => x.ToListResponse());
     }
 
     [HttpGet("{tenantId:int}/products/{productId:int}")]
