@@ -29,19 +29,19 @@ internal class SeedCommandHandler : IRequestHandler<SeedCommand>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var result = await CreateUserAsync(cancellationToken);
+        var globalTenantResult = await CreateUserAsync("Global Tenant", new Email("admin@global.com"), cancellationToken);
+        await CreateProductsAsync(globalTenantResult.TenantId, "GT", request.SeededBy, cancellationToken);
 
-        await CreateProductsAsync(result.TenantId, request.SeededBy, cancellationToken);
+        var antuDevOpsTenantResult = await CreateUserAsync("Antu DevOps", new Email("pablo.castillo@antudevops.com"), cancellationToken);
+        await CreateProductsAsync(antuDevOpsTenantResult.TenantId, "ADO", request.SeededBy, cancellationToken);
     }
 
-    private async Task<(TenantId TenantId, UserId UserId)> CreateUserAsync(CancellationToken cancellationToken)
+    private async Task<(TenantId TenantId, UserId UserId)> CreateUserAsync(string tenantName, Email userEmail, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var tenantName = "Global Tenant";
         var tenant = await _tenantRepository.GetByNameOrDefaultAsync(tenantName, cancellationToken);
 
-        var userEmail = new Email("admin@antudevops.com");
         var user = await _userRepository.GetByEmailOrDefaultAsync(userEmail, cancellationToken);
 
         if (tenant is not null && user is not null)
@@ -60,13 +60,13 @@ internal class SeedCommandHandler : IRequestHandler<SeedCommand>
         return (result.TenantId, result.UserId);
     }
 
-    private async Task CreateProductsAsync(TenantId tenantId, string seededBy, CancellationToken cancellationToken)
+    private async Task CreateProductsAsync(TenantId tenantId, string codePrefix, string seededBy, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var productCodes = Enumerable
             .Range(1, 100)
-            .Select(index => $"P-{index.ToString().PadLeft(3, '0')}");
+            .Select(index => $"{codePrefix}-{index.ToString().PadLeft(3, '0')}");
 
         foreach (var code in productCodes)
         {
@@ -78,7 +78,7 @@ internal class SeedCommandHandler : IRequestHandler<SeedCommand>
             await _sender.Send(new CreateProductCommand(
                 tenantId,
                 code,
-                code,
+                null,
                 seededBy));
         }
     }

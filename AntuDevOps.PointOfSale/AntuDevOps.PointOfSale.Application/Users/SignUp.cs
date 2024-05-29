@@ -54,8 +54,9 @@ internal class SignUpCommandHandler : IRequestHandler<SignUpCommand, UserSignedU
 
         if (tenant is null)
         {
-            tenant = Tenant.SignUp(request.TenantName);
-            await _tenantRepository.CreateAsync(tenant, cancellationToken);
+            var newTenant = Tenant.SignUp(request.TenantName);
+            var createdTenantId = await _tenantRepository.CreateAsync(newTenant, cancellationToken);
+            tenant = await _tenantRepository.GetAsync(createdTenantId);
         }
 
         var user = User.SignUp(
