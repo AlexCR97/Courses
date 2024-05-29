@@ -43,8 +43,8 @@ public class TenantsController : ControllerBase
         return productId;
     }
 
-    [HttpGet("{tenantId:int}/products")]
-    public async Task<PagedResult<ProductListResponse>> FindProducts(
+    [HttpGet("{tenantId:int}/products/v1")]
+    public async Task<PagedResult<ProductListResponse>> FindProductsV1(
         [FromRoute] int tenantId,
         [FromQuery] int page = FindQuery.PageDefault,
         [FromQuery] int size = FindQuery.SizeDefault,
@@ -57,6 +57,51 @@ public class TenantsController : ControllerBase
             size,
             Sort.ParseOrDefault(sort),
             search));
+
+        return products.Map(x => x.ToListResponse());
+    }
+
+    [HttpGet("{tenantId:int}/products/v2")]
+    public async Task<PagedResult<ProductListResponse>> FindProductsV2(
+        [FromRoute] int tenantId,
+        [FromQuery] int page = FindQuery.PageDefault,
+        [FromQuery] int size = FindQuery.SizeDefault,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? code = null,
+        [FromQuery] string? displayName = null)
+    {
+        var products = await _sender.Send(new FindProductsQuery(
+            new TenantId(tenantId),
+            page,
+            size,
+            Sort.ParseOrDefault(sort),
+            new OrExpression()
+                .Or(string.IsNullOrWhiteSpace(code) ? null : $@"code.trim().toLower().contains(""{code.Trim().ToLower()}"")")
+                .Or(string.IsNullOrWhiteSpace(displayName) ? null : $@"displayName.trim().toLower().contains(""{displayName.Trim().ToLower()}"")")
+                .BuildExpression()));
+
+        return products.Map(x => x.ToListResponse());
+    }
+
+    [HttpGet("{tenantId:int}/products/v3")]
+    public async Task<PagedResult<ProductListResponse>> FindProductsV3(
+        [FromRoute] int tenantId,
+        [FromQuery] int page = FindQuery.PageDefault,
+        [FromQuery] int size = FindQuery.SizeDefault,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? search = null)
+    {
+        var products = await _sender.Send(new FindProductsQuery(
+            new TenantId(tenantId),
+            page,
+            size,
+            Sort.ParseOrDefault(sort),
+            string.IsNullOrWhiteSpace(search)
+                ? null
+                : new OrExpression()
+                    .Or(string.IsNullOrWhiteSpace(search) ? null : $@"code.trim().toLower().contains(""{search.Trim().ToLower()}"")")
+                    .Or(string.IsNullOrWhiteSpace(search) ? null : $@"displayName.trim().toLower().contains(""{search.Trim().ToLower()}"")")
+                    .BuildExpression()));
 
         return products.Map(x => x.ToListResponse());
     }

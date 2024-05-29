@@ -28,9 +28,9 @@ internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, Pag
 
         request = request with
         {
-            Search = new SearchExpression(request.Search)
+            Search = new AndExpression(request.Search)
                 .And($"tenantId == {request.TenantId.Value}")
-                .Build(),
+                .BuildExpression(),
         };
 
         return await _productRepository.FindAsync(request, cancellationToken);

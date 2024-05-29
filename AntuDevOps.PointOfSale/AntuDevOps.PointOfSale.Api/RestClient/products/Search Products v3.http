@@ -1,0 +1,4 @@
+@search = 3
+
+GET {{apiUrl}}/{{tenantId}}/products/v3?search={{search}}
+Content-Type: application/json
