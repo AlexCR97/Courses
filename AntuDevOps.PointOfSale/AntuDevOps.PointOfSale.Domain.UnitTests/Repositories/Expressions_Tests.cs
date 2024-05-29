@@ -65,7 +65,7 @@ public class Expressions_Tests
     }
 
     [Fact]
-    public void ShouldBuildComplexCompundExpression()
+    public void ShouldBuildComplexCompoundExpression()
     {
         var builtExpression = new AndExpression()
             .And("tenantId == 1")
