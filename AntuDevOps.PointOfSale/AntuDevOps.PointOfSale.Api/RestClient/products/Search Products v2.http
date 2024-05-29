@@ -1,5 +1,5 @@
 @code = 7
-@displayName = 7
+@displayName = 1
 
 GET {{apiUrl}}/{{tenantId}}/products/v2?code={{code}}&displayName={{displayName}}
 Content-Type: application/json

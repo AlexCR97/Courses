@@ -76,8 +76,8 @@ public class TenantsController : ControllerBase
             size,
             Sort.ParseOrDefault(sort),
             new OrExpression()
-                .Or(string.IsNullOrWhiteSpace(code) ? null : $@"code.trim().toLower().contains(""{code.Trim().ToLower()}"")")
-                .Or(string.IsNullOrWhiteSpace(displayName) ? null : $@"displayName.trim().toLower().contains(""{displayName.Trim().ToLower()}"")")
+                .Or(ContainsExpression.For("code", code))
+                .Or(ContainsExpression.For("displayName", displayName))
                 .BuildExpression()));
 
         return products.Map(x => x.ToListResponse());
@@ -96,12 +96,10 @@ public class TenantsController : ControllerBase
             page,
             size,
             Sort.ParseOrDefault(sort),
-            string.IsNullOrWhiteSpace(search)
-                ? null
-                : new OrExpression()
-                    .Or(string.IsNullOrWhiteSpace(search) ? null : $@"code.trim().toLower().contains(""{search.Trim().ToLower()}"")")
-                    .Or(string.IsNullOrWhiteSpace(search) ? null : $@"displayName.trim().toLower().contains(""{search.Trim().ToLower()}"")")
-                    .BuildExpression()));
+            new OrExpression()
+                .Or(ContainsExpression.For("code", search))
+                .Or(ContainsExpression.For("displayName", search))
+                .BuildExpression()));
 
         return products.Map(x => x.ToListResponse());
     }
