@@ -26,7 +26,12 @@ internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, Pag
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        // TODO Use TenantId
+        request = request with
+        {
+            Search = new SearchExpression(request.Search)
+                .And($"tenantId == {request.TenantId.Value}")
+                .Build(),
+        };
 
         return await _productRepository.FindAsync(request, cancellationToken);
     }

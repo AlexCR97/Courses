@@ -1,7 +1,7 @@
-@page = 1
-@size = 5
+@page = 3
+@size = 3
 @sort = displayName asc
-@search = true
+@search = code.contains("7")
 
 GET {{apiUrl}}/{{tenantId}}/products?page={{page}}&size={{size}}&sort={{sort}}&search={{search}}
 Content-Type: application/json

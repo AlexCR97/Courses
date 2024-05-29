@@ -32,10 +32,10 @@ public record FindQuery : IFindQuery
         new Validator().ValidateAndThrow(this);
     }
 
-    public int Page { get; }
-    public int Size { get; }
-    public Sort? Sort { get; }
-    public string? Search { get; }
+    public int Page { get; init; }
+    public int Size { get; init; }
+    public Sort? Sort { get; init; }
+    public string? Search { get; init; }
 
     public static FindQuery Create(
         int page = PageDefault,
