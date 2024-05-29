@@ -66,10 +66,10 @@ public class AndExpression : CompoundExpression
 
     public override string BuildExpression()
     {
-        if (Expressions.Count == 0)
+        if (SubExpressions.Count == 0)
             return "true";
 
-        var builtExpressions = Expressions.Select(x => $"({x.BuildExpression()})");
+        var builtExpressions = SubExpressions.Select(x => $"({x.BuildExpression()})");
         return string.Join(" and ", builtExpressions);
     }
 }
@@ -94,10 +94,10 @@ public class OrExpression : CompoundExpression
 
     public override string BuildExpression()
     {
-        if (Expressions.Count == 0)
+        if (SubExpressions.Count == 0)
             return "true";
 
-        var builtExpressions = Expressions.Select(x => $"({x.BuildExpression()})");
+        var builtExpressions = SubExpressions.Select(x => $"({x.BuildExpression()})");
         return string.Join(" or ", builtExpressions);
     }
 }
@@ -108,7 +108,7 @@ public abstract class CompoundExpression : IExpression
     public CompoundExpression(string? expression) => TryAddExpression(expression);
     public CompoundExpression(IExpression? expression) => TryAddExpression(expression);
 
-    protected List<IExpression> Expressions { get; } = new();
+    protected List<IExpression> SubExpressions { get; } = new();
 
     public abstract string BuildExpression();
 
@@ -121,6 +121,6 @@ public abstract class CompoundExpression : IExpression
     protected void TryAddExpression(IExpression? expression)
     {
         if (expression is not null)
-            Expressions.Add(expression);
+            SubExpressions.Add(expression);
     }
 }
