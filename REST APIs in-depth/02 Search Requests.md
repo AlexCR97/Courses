@@ -6,7 +6,7 @@
 
 ### What is API pagination?
 
-API Pagination is a technique used in API design to retrieve large data sets in a manageable manner. When an endpoint returns a large amount of data, pagination allows the data to be divided into smaller chunks or "pages". Each page contains a limited number of records.
+It's a technique used to retrieve large data sets in a manageable manner. When an endpoint returns large amounts of data, pagination allows the data to be divided into smaller "pages", each with a limited number of results.
 
 **API pagination benefits:**
 
@@ -40,10 +40,12 @@ GET /api/products?last_key=XYZ123
 
 Always include pagination metadata in the API response:
 
-- Total number of records
 - The current page
-- The number of pages
-- Links to the next and previous pages
+- The current size
+- The next page
+- The previous page
+- The total number of pages
+- The Total number of records
 
 This metadata helps API consumers navigate through the paginated data more effectively.
 
@@ -58,11 +60,12 @@ This metadata helps API consumers navigate through the paginated data more effec
     ...
   ],
   "pagination": {
-    "totalCount": 100,
-    "currentPage": 1,
+    "currentPage": 3,
+    "currentSize": 10,
+    "nextPage": 4,
+    "prevPage": 2,
     "totalPages": 10,
-    "nextPage": 2,
-    "prevPage": null
+    "totalCount": 100
   }
 }
 ```
