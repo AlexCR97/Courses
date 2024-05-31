@@ -28,7 +28,7 @@ internal static class PaginationExtensions
             : queryable.Where(search);
     }
 
-    public static IQueryable<T> Paginate<T>(this IQueryable<T> queryable, int page, int size)
+    private static IQueryable<T> Paginate<T>(this IQueryable<T> queryable, int page, int size)
     {
         return queryable
             .Skip((page - 1) * size)
