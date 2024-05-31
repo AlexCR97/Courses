@@ -5,10 +5,14 @@ using MediatR;
 namespace AntuDevOps.PointOfSale.Application.Products;
 
 public record FindProductsQuery(
-    TenantId TenantId)
-    : IRequest<IReadOnlyList<Product>>;
+    TenantId TenantId,
+    int Page = FindQuery.PageDefault,
+    int Size = FindQuery.SizeDefault,
+    Sort? Sort = null)
+    : FindQuery(Page, Size, Sort)
+    , IRequest<PagedResult<Product>>;
 
-internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IReadOnlyList<Product>>
+internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, PagedResult<Product>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -17,10 +21,10 @@ internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IRe
         _productRepository = productRepository;
     }
 
-    public async Task<IReadOnlyList<Product>> Handle(FindProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<Product>> Handle(FindProductsQuery request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        return await _productRepository.FindAsync(cancellationToken);
+        return await _productRepository.FindAsync(request, cancellationToken);
     }
 }
