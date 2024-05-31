@@ -41,16 +41,15 @@ internal class ProductRepository : IProductRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PagedResult<Product>> FindAsync(IFindQuery query, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Product>> FindAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var pagedResult = await _dbContext.Products
-            .AsQueryable()
-            .Find(query)
-            .ToPagedResultAsync(query, _dbContext.Products, cancellationToken);
+        var products = await _dbContext.Products.ToListAsync(cancellationToken);
 
-        return pagedResult.Map(entity => entity.ToModel());
+        return products
+            .Select(entity => entity.ToModel())
+            .ToList();
     }
 
     public async Task<Product> GetAsync(ProductId id, CancellationToken cancellationToken = default)

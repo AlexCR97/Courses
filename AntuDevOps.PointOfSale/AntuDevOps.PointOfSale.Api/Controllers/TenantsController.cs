@@ -1,7 +1,6 @@
 using AntuDevOps.PointOfSale.Api.DTOs;
 using AntuDevOps.PointOfSale.Application.Products;
 using AntuDevOps.PointOfSale.Domain.Models;
-using AntuDevOps.PointOfSale.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +20,11 @@ public class TenantsController : ControllerBase
     #region Tenant
 
     [HttpPost("sign-up")]
-    public async Task<CreatedResult> SignUp([FromBody] SignUpRequest request)
+    public async Task<SignedUpResponse> SignUp([FromBody] SignUpRequest request)
     {
         var result = await _sender.Send(request.ToCommand());
         var response = result.ToResponse();
-        return Created((string?)null, response);
+        return response;
     }
 
     #endregion
@@ -33,7 +32,7 @@ public class TenantsController : ControllerBase
     #region Products
 
     [HttpPost("{tenantId:int}/products")]
-    public async Task<CreatedAtActionResult> CreateProduct(
+    public async Task<ProductId> CreateProduct(
         [FromRoute] int tenantId,
         [FromBody] CreateProductRequest request)
     {
@@ -41,81 +40,24 @@ public class TenantsController : ControllerBase
             "Unknown",
             tenantId));
 
-        return CreatedAtAction(
-            nameof(GetProduct),
-            new { tenantId, productId = productId.Value },
-            new { ProductId = productId.Value });
+        return productId;
     }
 
-    [HttpGet("{tenantId:int}/products/v1")]
-    public async Task<OkObjectResult> FindProductsV1(
-        [FromRoute] int tenantId,
-        [FromQuery] int page = FindQuery.PageDefault,
-        [FromQuery] int size = FindQuery.SizeDefault,
-        [FromQuery] string? sort = null,
-        [FromQuery] string? search = null)
+    [HttpGet("{tenantId:int}/products")]
+    public async Task<IReadOnlyList<ProductListResponse>> FindProducts(
+        [FromRoute] int tenantId)
     {
-        var products = await _sender.Send(new FindProductsQuery(
-            new TenantId(tenantId),
-            page,
-            size,
-            Sort.ParseOrDefault(sort),
-            search));
+        var products = await _sender.Send(new FindProductsQuery(new TenantId(tenantId)));
 
-        var response = products.Map(x => x.ToListResponse());
+        var response = products
+            .Select(x => x.ToListResponse())
+            .ToList();
 
-        return Ok(response);
-    }
-
-    [HttpGet("{tenantId:int}/products/v2")]
-    public async Task<OkObjectResult> FindProductsV2(
-        [FromRoute] int tenantId,
-        [FromQuery] int page = FindQuery.PageDefault,
-        [FromQuery] int size = FindQuery.SizeDefault,
-        [FromQuery] string? sort = null,
-        [FromQuery] string? code = null,
-        [FromQuery] string? displayName = null)
-    {
-        var products = await _sender.Send(new FindProductsQuery(
-            new TenantId(tenantId),
-            page,
-            size,
-            Sort.ParseOrDefault(sort),
-            new OrExpression()
-                .Or(ContainsExpression.For("code", code))
-                .Or(ContainsExpression.For("displayName", displayName))
-                .BuildExpression()));
-
-        var response = products.Map(x => x.ToListResponse());
-
-        return Ok(response);
-    }
-
-    [HttpGet("{tenantId:int}/products/v3")]
-    public async Task<OkObjectResult> FindProductsV3(
-        [FromRoute] int tenantId,
-        [FromQuery] int page = FindQuery.PageDefault,
-        [FromQuery] int size = FindQuery.SizeDefault,
-        [FromQuery] string? sort = null,
-        [FromQuery] string? search = null)
-    {
-        var products = await _sender.Send(new FindProductsQuery(
-            new TenantId(tenantId),
-            page,
-            size,
-            Sort.ParseOrDefault(sort),
-            new OrExpression()
-                .Or(ContainsExpression.For("code", search))
-                .Or(ContainsExpression.For("displayName", search))
-                .BuildExpression()));
-
-        var response = products.Map(x => x.ToListResponse());
-
-        return Ok(response);
+        return response;
     }
 
     [HttpGet("{tenantId:int}/products/{productId:int}", Name = nameof(GetProduct))]
-    public async Task<OkObjectResult> GetProduct(
+    public async Task<ProductProfileResponse> GetProduct(
         [FromRoute] int tenantId,
         [FromRoute] int productId)
     {
@@ -125,11 +67,11 @@ public class TenantsController : ControllerBase
 
         var response = product.ToProfileResponse();
 
-        return Ok(response);
+        return response;
     }
 
     [HttpPut("{tenantId:int}/products/{productId:int}")]
-    public async Task<NoContentResult> UpdateProduct(
+    public async Task UpdateProduct(
         [FromRoute] int tenantId,
         [FromRoute] int productId,
         [FromBody] UpdateProductRequest request)
@@ -139,18 +81,14 @@ public class TenantsController : ControllerBase
         await _sender.Send(request.ToCommand(
             "Unknown",
             productId));
-
-        return NoContent();
     }
 
     [HttpDelete("{tenantId:int}/products/{productId:int}")]
-    public async Task<NoContentResult> DeleteProduct([FromRoute] int tenantId, [FromRoute] int productId)
+    public async Task DeleteProduct([FromRoute] int tenantId, [FromRoute] int productId)
     {
         // TODO Verify that product belongs to the tenant
 
         await _sender.Send(new DeleteProductCommand(new ProductId(productId)));
-
-        return NoContent();
     }
 
     [HttpPost("{tenantId:int}/products/{productId:int}/images")]
