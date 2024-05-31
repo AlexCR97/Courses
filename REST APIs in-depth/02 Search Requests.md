@@ -21,18 +21,33 @@ It's a technique used to retrieve large data sets in a manageable manner. When a
 
 ```text
 # Offset Limit pagination
+
 GET /api/posts?offset=0&limit=10
+```
 
+```text
 # Page-based pagination
+
 GET /api/posts?page=2&size=20
+```
 
+**Other less common techniques are:**
+
+```text
 # Cursor pagination
+
 GET /api/posts?cursor=eyJpZCI6MX0
+```
 
+```text
 # Time-based pagination
-GET /api/events?start_time=2023-01-01T00:00:00Z&end_time=2023-01-31T23:59:59Z
 
+GET /api/events?start_time=2023-01-01T00:00:00Z&end_time=2023-01-31T23:59:59Z
+```
+
+```text
 # Keyset pagination
+
 GET /api/products?last_key=XYZ123
 ```
 
@@ -45,9 +60,11 @@ Always include pagination metadata in the API response:
 - The next page
 - The previous page
 - The total number of pages
-- The Total number of records
+- The total number of records
 
 This metadata helps API consumers navigate through the paginated data more effectively.
+
+Example:
 
 ```json
 {
@@ -111,13 +128,11 @@ GET /api/posts?term=funny cats
 - LinkedIn uses pagination to retrieve posts and comments.
 - Amazon uses pagination to retrieve product listings, search results and user reviews.
 - Banking apps use pagination to retrieve transaction history.
-- Job search platforms like Indeed or LinkedIn Jobs offer paginated APIs for retrieving job listings based on various criteria such as location, industry, or keywords.
 
 **Real-world APIs that use pagination:**
 
 - <https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user>
 - <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-search-api-example>
-- <https://developers.google.com/photos/library/reference/rest/v1/albums/list>
 - <https://pokeapi.co/docs/v2#resource-listspagination-section>
 - <https://nominatim.org/>
 
