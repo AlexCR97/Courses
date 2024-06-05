@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mongo\**" />
+    <EmbeddedResource Remove="Mongo\**" />
+    <None Remove="Mongo\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AntuDevOps.PointOfSale.Application\AntuDevOps.PointOfSale.Application.csproj" />
   </ItemGroup>
 

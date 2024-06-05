@@ -46,7 +46,7 @@ internal class TenantRepository : ITenantRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var tenants = await _dbContext.Tenants
-            .AsQueryable()
+            .AsNoTracking()
             .Find(query)
             .ToPagedResultAsync(query, _dbContext.Tenants, cancellationToken);
 

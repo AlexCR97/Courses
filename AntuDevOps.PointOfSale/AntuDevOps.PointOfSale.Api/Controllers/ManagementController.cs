@@ -18,6 +18,6 @@ public class ManagementController
     [HttpPost("seed")]
     public async Task Seed()
     {
-        await _sender.Send(new SeedCommand("Anonymous"));
+        await _sender.Send(new SeedCommand());
     }
 }

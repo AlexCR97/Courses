@@ -2,13 +2,15 @@
 
 namespace AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities;
 
-internal class ProductEntity : BaseEntity
+internal class WarehouseEntity : BaseEntity
 {
-    public ProductEntity()
+    public WarehouseEntity()
     {
     }
 
-    public ProductEntity(int id, DateTime createdAt, string createdBy, DateTime? lastModifiedAt, string? lastModifiedBy, int tenantId, TenantEntity? tenant, string code, string? displayName) : base(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy)
+    public WarehouseEntity(
+        int id, DateTime createdAt, string createdBy, DateTime? lastModifiedAt, string? lastModifiedBy, int tenantId, TenantEntity? tenant, string code, string displayName)
+        : base(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy)
     {
         TenantId = tenantId;
         Tenant = tenant;
@@ -20,14 +22,14 @@ internal class ProductEntity : BaseEntity
     public TenantEntity? Tenant { get; set; }
 
     public string Code { get; set; }
-    public string? DisplayName { get; set; }
+    public string DisplayName { get; set; }
 }
 
-internal static class ProductEntityExtensions
+internal static class WarehouseEntityExtensions
 {
-    public static ProductEntity ToEntity(this Product a)
+    public static WarehouseEntity ToEntity(this Warehouse a)
     {
-        return new ProductEntity(
+        return new WarehouseEntity(
             a.Id.Value,
             a.CreatedAt,
             a.CreatedBy,
@@ -39,16 +41,17 @@ internal static class ProductEntityExtensions
             a.DisplayName);
     }
 
-    public static Product ToModel(this ProductEntity a)
+    public static Warehouse ToModel(this WarehouseEntity a, List<Stock> stock)
     {
-        return new Product(
-            new ProductId(a.Id),
+        return new Warehouse(
+            new WarehouseId(a.Id),
             a.CreatedAt,
             a.CreatedBy,
             a.LastModifiedAt,
             a.LastModifiedBy,
             new TenantId(a.TenantId),
             a.Code,
-            a.DisplayName);
+            a.DisplayName,
+            stock);
     }
 }

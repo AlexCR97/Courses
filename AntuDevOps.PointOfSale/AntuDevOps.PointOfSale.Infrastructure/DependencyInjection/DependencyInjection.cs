@@ -15,10 +15,15 @@ public static class DependencyInjection
             .AddDbContext<PointOfSaleDbContext>(options =>
             {
                 var connectionString = configuration.GetRequiredSection("ConnectionStrings:Localhost").Value;
-                options.UseSqlServer(connectionString);
-            })
+
+                options
+                    .UseSqlServer(connectionString)
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            }, ServiceLifetime.Transient)
+            .AddTransient<IOrderRepository, OrderRepository>()
             .AddTransient<IProductRepository, ProductRepository>()
             .AddTransient<ITenantRepository, TenantRepository>()
-            .AddTransient<IUserRepository, UserRepository>();
+            .AddTransient<IUserRepository, UserRepository>()
+            .AddTransient<IWarehouseRepository, WarehouseRepository>();
     }
 }

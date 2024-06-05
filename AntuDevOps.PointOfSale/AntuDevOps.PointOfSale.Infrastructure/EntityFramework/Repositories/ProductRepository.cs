@@ -46,7 +46,7 @@ internal class ProductRepository : IProductRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var pagedResult = await _dbContext.Products
-            .AsQueryable()
+            .AsNoTracking()
             .Find(query)
             .ToPagedResultAsync(query, _dbContext.Products, cancellationToken);
 
@@ -57,7 +57,9 @@ internal class ProductRepository : IProductRepository
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var products = await _dbContext.Products.ToListAsync(cancellationToken);
+        var products = await _dbContext.Products
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
 
         return products
             .Select(entity => entity.ToModel())

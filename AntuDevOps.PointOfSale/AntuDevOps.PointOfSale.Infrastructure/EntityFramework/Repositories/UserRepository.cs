@@ -55,7 +55,7 @@ internal class UserRepository : IUserRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         var pagedUserEntities = await _dbContext.Users
-            .AsQueryable()
+            .AsNoTracking()
             .Find(query)
             .ToPagedResultAsync(query, _dbContext.Users, cancellationToken);
 
