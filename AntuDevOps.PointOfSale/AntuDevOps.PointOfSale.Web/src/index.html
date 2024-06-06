@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>AntuDevOps.PointOfSale.Web</title>
+  </head>
+  <body>
+    <div
+      id="tenantId"
+      style="margin-bottom: 10px">
+      <label
+        for="tenantIdInput"
+        style="display: block">
+        Tenant ID
+      </label>
+      <input
+        id="tenantIdInput"
+        type="number" />
+    </div>
+
+    <div
+      id="page"
+      style="margin-bottom: 10px">
+      <label
+        for="pageInput"
+        style="display: block">
+        Page
+      </label>
+      <input
+        id="pageInput"
+        type="number" />
+    </div>
+
+    <div
+      id="size"
+      style="margin-bottom: 10px">
+      <label
+        for="sizeInput"
+        style="display: block">
+        Size
+      </label>
+      <input
+        id="sizeInput"
+        type="number" />
+    </div>
+
+    <div
+      id="sort"
+      style="margin-bottom: 10px">
+      <label
+        for="sortInput"
+        style="display: block">
+        Sort
+      </label>
+      <input
+        id="sortInput"
+        type="text" />
+    </div>
+
+    <div
+      id="search"
+      style="margin-bottom: 10px">
+      <label
+        for="searchInput"
+        style="display: block">
+        Search
+      </label>
+      <input
+        id="searchInput"
+        type="text" />
+    </div>
+
+    <button
+      id="searchButton"
+      style="display: block; margin-bottom: 20px">
+      Search
+    </button>
+
+    <pre>
+<code id="responseContainer">No Content</code>
+    </pre>
+
+    <script>
+      (() => {
+        const tenantIdInput = document.getElementById("tenantIdInput");
+        const pageInput = document.getElementById("pageInput");
+        const sizeInput = document.getElementById("sizeInput");
+        const sortInput = document.getElementById("sortInput");
+        const searchInput = document.getElementById("searchInput");
+        const searchButton = document.getElementById("searchButton");
+        const responseContainer = document.getElementById("responseContainer");
+
+        searchButton.onclick = async () => {
+          const tenantId = tenantIdInput.value;
+          const page = pageInput.value;
+          const size = sizeInput.value;
+          const sort = sortInput.value;
+          const search = searchInput.value;
+
+          if (!tenantId) {
+            return alert("Tenant ID is required.");
+          }
+
+          const queryParamStr = (() => {
+            const parts = [];
+
+            if (page) parts.push(`page=${page}`);
+            if (size) parts.push(`size=${size}`);
+            if (sort) parts.push(`sort=${sort}`);
+            if (search) parts.push(`search=${search}`);
+
+            return parts.join("&");
+          })();
+
+          const response = await fetch(
+            `https://localhost:7176/api/tenants/${tenantId}/products?${queryParamStr}`
+          );
+          const responseJson = await response.json();
+          const responseJsonStr = JSON.stringify(responseJson, undefined, 4);
+
+          responseContainer.innerText = responseJsonStr;
+        };
+      })();
+    </script>
+  </body>
+</html>
