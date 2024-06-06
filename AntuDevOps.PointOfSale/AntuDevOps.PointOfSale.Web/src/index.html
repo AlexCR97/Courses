@@ -85,6 +85,18 @@
 
     <script>
       (() => {
+        function urlV1(tenantId, queryParamStr) {
+          return `https://localhost:7176/api/tenants/${tenantId}/products?${queryParamStr}`;
+        }
+
+        function urlV2(tenantId, queryParamStr) {
+          return `https://localhost:7176/api/tenants/${tenantId}/products/v2?${queryParamStr}`;
+        }
+
+        function urlV3(tenantId, queryParamStr) {
+          return `https://localhost:7176/api/tenants/${tenantId}/products/v3?${queryParamStr}`;
+        }
+
         const tenantIdInput = document.getElementById("tenantIdInput");
         const pageInput = document.getElementById("pageInput");
         const sizeInput = document.getElementById("sizeInput");
@@ -115,9 +127,7 @@
             return parts.join("&");
           })();
 
-          const response = await fetch(
-            `https://localhost:7176/api/tenants/${tenantId}/products?${queryParamStr}`
-          );
+          const response = await fetch(urlV1(tenantId, queryParamStr));
           const responseJson = await response.json();
           const responseJsonStr = JSON.stringify(responseJson, undefined, 4);
 
