@@ -5,9 +5,10 @@ public readonly record struct TenantId(int Value);
 public class Tenant : AggregateRoot<TenantId>
 {
 
-    public Tenant(TenantId id, DateTime createdAt, string createdBy, DateTime? lastModifiedAt, string? lastModifiedBy, string name) : base(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy)
+    public Tenant(TenantId id, DateTime createdAt, string createdBy, DateTime? lastModifiedAt, string? lastModifiedBy, string name, IReadOnlyList<TenantPreference> preferences) : base(id, createdAt, createdBy, lastModifiedAt, lastModifiedBy)
     {
         Name = name;
+        _preferences = preferences.ToList();
     }
 
     public string Name { get; private set; }
@@ -23,7 +24,8 @@ public class Tenant : AggregateRoot<TenantId>
             "Anonymous",
             null,
             null,
-            name);
+            name,
+            new List<TenantPreference>());
     }
 
     public TenantPreference GetPreference(string key)

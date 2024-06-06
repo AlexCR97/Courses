@@ -112,6 +112,7 @@ internal static class OrderStatusStateMachine
         [OrderStatus.Drafted] = new HashSet<OrderStatus>
         {
             OrderStatus.Processing,
+            OrderStatus.Completed,
             OrderStatus.Cancelled,
         },
         [OrderStatus.Processing] = new HashSet<OrderStatus>

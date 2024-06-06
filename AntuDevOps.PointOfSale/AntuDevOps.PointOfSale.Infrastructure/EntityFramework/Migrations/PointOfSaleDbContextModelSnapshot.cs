@@ -75,6 +75,42 @@ namespace EntityFramework.Migrations
                     b.ToTable("OrderLines");
                 });
 
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderSnapshotEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderSnapshots");
+                });
+
             modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -147,6 +183,22 @@ namespace EntityFramework.Migrations
                         .IsUnique();
 
                     b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantPreferenceEntity", b =>
+                {
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TenantId", "Key");
+
+                    b.ToTable("TenantPreferences");
                 });
 
             modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantUserEntity", b =>
@@ -313,7 +365,84 @@ namespace EntityFramework.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderSnapshotEntity", b =>
+                {
+                    b.OwnsMany("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderLineSnapshotEntity", "Lines", b1 =>
+                        {
+                            b1.Property<int>("OrderSnapshotEntityId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("int");
+
+                            b1.HasKey("OrderSnapshotEntityId", "Id");
+
+                            b1.ToTable("OrderSnapshots");
+
+                            b1.ToJson("Lines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderSnapshotEntityId");
+
+                            b1.OwnsOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductSnapshotEntity", "Product", b2 =>
+                                {
+                                    b2.Property<int>("OrderLineSnapshotEntityOrderSnapshotEntityId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<int>("OrderLineSnapshotEntityId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<string>("Code")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<DateTime>("CreatedAt")
+                                        .HasColumnType("datetime2");
+
+                                    b2.Property<string>("CreatedBy")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<string>("DisplayName")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<int>("Id")
+                                        .HasColumnType("int");
+
+                                    b2.Property<decimal>("Price")
+                                        .HasColumnType("decimal(18,2)");
+
+                                    b2.HasKey("OrderLineSnapshotEntityOrderSnapshotEntityId", "OrderLineSnapshotEntityId");
+
+                                    b2.ToTable("OrderSnapshots");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("OrderLineSnapshotEntityOrderSnapshotEntityId", "OrderLineSnapshotEntityId");
+                                });
+
+                            b1.Navigation("Product")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Lines");
+                });
+
             modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantPreferenceEntity", b =>
                 {
                     b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
                         .WithMany()

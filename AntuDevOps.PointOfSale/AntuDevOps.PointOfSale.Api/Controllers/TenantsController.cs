@@ -1,6 +1,8 @@
 using AntuDevOps.PointOfSale.Api.DTOs;
 using AntuDevOps.PointOfSale.Application.Orders;
+using AntuDevOps.PointOfSale.Application.OrderSnapshots;
 using AntuDevOps.PointOfSale.Application.Products;
+using AntuDevOps.PointOfSale.Application.Tenants;
 using AntuDevOps.PointOfSale.Application.Warehouses;
 using AntuDevOps.PointOfSale.Domain.Models;
 using AntuDevOps.PointOfSale.Domain.Repositories;
@@ -235,6 +237,21 @@ public class TenantsController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("{tenantId:int}/warehouses/{warehouseId:int}/selection")]
+    public async Task<NoContentResult> SelectWarehouse(
+        [FromRoute] int tenantId,
+        [FromRoute] int warehouseId)
+    {
+        // TODO Use tenantId
+
+        await _sender.Send(new SelectWarehouseCommand(
+            new TenantId(tenantId),
+            new WarehouseId(warehouseId),
+            "Unknown"));
+
+        return NoContent();
+    }
+
     #endregion
 
     #region Orders
@@ -317,6 +334,58 @@ public class TenantsController : ControllerBase
             "Unknown"));
 
         return NoContent();
+    }
+
+    [HttpPost("{tenantId:int}/orders/{orderId:int}/completion")]
+    public async Task<NoContentResult> CompleteOrder(
+        [FromRoute] int tenantId,
+        [FromRoute] int orderId)
+    {
+        await _sender.Send(new SetOrderStatusRequest(
+            new TenantId(tenantId),
+            new OrderId(orderId),
+            OrderStatus.Completed,
+            "Unknown"));
+
+        return NoContent();
+    }
+
+    #endregion
+
+    #region OrderSnapshots
+
+    [HttpGet("{tenantId:int}/order-snapshots")]
+    public async Task<OkObjectResult> FindOrderSnapshots(
+        [FromRoute] int tenantId,
+        [FromQuery] int page = FindQuery.PageDefault,
+        [FromQuery] int size = FindQuery.SizeDefault,
+        [FromQuery] string? sort = null)
+    {
+        // TODO Use tenantId
+
+        var orders = await _sender.Send(new FindOrderSnapshotsQuery(
+            new TenantId(tenantId),
+            page,
+            size,
+            Sort.ParseOrDefault(sort)));
+
+        var response = orders.Map(x => x.ToListResponse());
+
+        return Ok(response);
+    }
+
+    [HttpGet("{tenantId:int}/order-snapshots/{orderSnapshotId:int}")]
+    public async Task<OkObjectResult> FindOrderSnapshots(
+        [FromRoute] int tenantId,
+        [FromRoute] int orderSnapshotId)
+    {
+        // TODO Use tenantId
+
+        var orderSnapshot = await _sender.Send(new GetOrderSnapshotQuery(new OrderSnapshotId(orderSnapshotId)));
+
+        var response = orderSnapshot.ToProfileResponse();
+
+        return Ok(response);
     }
 
     #endregion

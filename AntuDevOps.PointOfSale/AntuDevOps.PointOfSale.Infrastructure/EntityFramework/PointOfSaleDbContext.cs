@@ -12,8 +12,10 @@ internal class PointOfSaleDbContext : DbContext
 
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderLineEntity> OrderLines { get; set; }
+    public DbSet<OrderSnapshotEntity> OrderSnapshots { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<TenantEntity> Tenants { get; set; }
+    public DbSet<TenantPreferenceEntity> TenantPreferences { get; set; }
     public DbSet<TenantUserEntity> TenantUsers { get; set; }
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
@@ -32,6 +34,14 @@ internal class PointOfSaleDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder
+            .Entity<OrderSnapshotEntity>()
+            .OwnsMany(order => order.Lines, line =>
+            {
+                line.ToJson();
+                line.OwnsOne(line => line.Product);
+            });
+
+        modelBuilder
             .Entity<ProductEntity>()
             .HasIndex(x => x.Code)
             .IsUnique();
@@ -40,6 +50,10 @@ internal class PointOfSaleDbContext : DbContext
             .Entity<TenantEntity>()
             .HasIndex(x => x.Name)
             .IsUnique();
+
+        modelBuilder
+            .Entity<TenantPreferenceEntity>()
+            .HasKey(x => new { x.TenantId, x.Key });
 
         modelBuilder
             .Entity<TenantUserEntity>()
