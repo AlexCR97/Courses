@@ -7,81 +7,121 @@
       content="width=device-width, initial-scale=1.0" />
     <title>AntuDevOps.PointOfSale.Web</title>
   </head>
-  <body>
-    <div
-      id="tenantId"
-      style="margin-bottom: 10px">
-      <label
-        for="tenantIdInput"
-        style="display: block">
-        Tenant ID
-      </label>
-      <input
-        id="tenantIdInput"
-        type="number" />
-    </div>
+  <body style="margin: 0; padding: 0">
+    <div style="display: flex; width: 100vw; height: 100vh; overflow: hidden">
+      <div
+        id="form"
+        style="padding: 10px">
+        <div
+          id="tenantId"
+          style="margin-bottom: 10px">
+          <label
+            for="tenantIdInput"
+            style="display: block">
+            Tenant ID
+          </label>
+          <input
+            id="tenantIdInput"
+            type="number" />
+        </div>
 
-    <div
-      id="page"
-      style="margin-bottom: 10px">
-      <label
-        for="pageInput"
-        style="display: block">
-        Page
-      </label>
-      <input
-        id="pageInput"
-        type="number" />
-    </div>
+        <div
+          id="page"
+          style="margin-bottom: 10px">
+          <label
+            for="pageInput"
+            style="display: block">
+            Page
+          </label>
+          <input
+            id="pageInput"
+            type="number" />
+        </div>
 
-    <div
-      id="size"
-      style="margin-bottom: 10px">
-      <label
-        for="sizeInput"
-        style="display: block">
-        Size
-      </label>
-      <input
-        id="sizeInput"
-        type="number" />
-    </div>
+        <div
+          id="size"
+          style="margin-bottom: 10px">
+          <label
+            for="sizeInput"
+            style="display: block">
+            Size
+          </label>
+          <input
+            id="sizeInput"
+            type="number" />
+        </div>
 
-    <div
-      id="sort"
-      style="margin-bottom: 10px">
-      <label
-        for="sortInput"
-        style="display: block">
-        Sort
-      </label>
-      <input
-        id="sortInput"
-        type="text" />
-    </div>
+        <div
+          id="sort"
+          style="margin-bottom: 10px">
+          <label
+            for="sortInput"
+            style="display: block">
+            Sort
+          </label>
+          <input
+            id="sortInput"
+            type="text" />
+        </div>
 
-    <div
-      id="search"
-      style="margin-bottom: 10px">
-      <label
-        for="searchInput"
-        style="display: block">
-        Search
-      </label>
-      <input
-        id="searchInput"
-        type="text" />
-    </div>
+        <div
+          id="search"
+          style="margin-bottom: 10px">
+          <label
+            for="searchInput"
+            style="display: block">
+            Search
+          </label>
+          <input
+            id="searchInput"
+            type="text" />
+        </div>
 
-    <button
-      id="searchButton"
-      style="display: block; margin-bottom: 20px">
-      Search
-    </button>
+        <!-- <div id="v2">
+          <div
+            id="code"
+            style="margin-bottom: 10px">
+            <label
+              for="codeInput"
+              style="display: block">
+              Code
+            </label>
+            <input
+              id="codeInput"
+              type="text" />
+          </div>
 
-    <pre>
+          <div
+            id="displayName"
+            style="margin-bottom: 10px">
+            <label
+              for="displayNameInput"
+              style="display: block">
+              Display Name
+            </label>
+            <input
+              id="displayNameInput"
+              type="text" />
+          </div>
+        </div> -->
+
+        <button
+          id="searchButton"
+          style="display: block; margin-bottom: 20px">
+          Search
+        </button>
+      </div>
+
+      <div style="border: 1px solid black; height: 100%"></div>
+
+      <div
+        id="content"
+        style="padding: 10px; width: 100%; overflow: auto">
+        <pre>
 <code id="responseContainer">No Content</code>
-    </pre>
+        </pre>
+      </div>
+    </div>
 
     <script>
       (() => {
@@ -102,6 +142,8 @@
         const sizeInput = document.getElementById("sizeInput");
         const sortInput = document.getElementById("sortInput");
         const searchInput = document.getElementById("searchInput");
+        const codeInput = document.getElementById("codeInput");
+        const displayNameInput = document.getElementById("displayNameInput");
         const searchButton = document.getElementById("searchButton");
         const responseContainer = document.getElementById("responseContainer");
 
@@ -111,6 +153,8 @@
           const size = sizeInput.value;
           const sort = sortInput.value;
           const search = searchInput.value;
+          const code = codeInput?.value;
+          const displayName = displayNameInput?.value;
 
           if (!tenantId) {
             return alert("Tenant ID is required.");
@@ -123,15 +167,22 @@
             if (size) parts.push(`size=${size}`);
             if (sort) parts.push(`sort=${sort}`);
             if (search) parts.push(`search=${search}`);
+            if (code) parts.push(`code=${code}`);
+            if (displayName) parts.push(`displayName=${displayName}`);
 
             return parts.join("&");
           })();
 
           const response = await fetch(urlV1(tenantId, queryParamStr));
-          const responseJson = await response.json();
-          const responseJsonStr = JSON.stringify(responseJson, undefined, 4);
 
-          responseContainer.innerText = responseJsonStr;
+          if (response.ok) {
+            const responseJson = await response.json();
+            const responseJsonStr = JSON.stringify(responseJson, undefined, 4);
+            responseContainer.innerText = responseJsonStr;
+          } else {
+            const responseText = await response.text();
+            responseContainer.innerText = responseText;
+          }
         };
       })();
     </script>
