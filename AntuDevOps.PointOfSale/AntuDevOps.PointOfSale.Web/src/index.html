@@ -173,7 +173,7 @@
             return parts.join("&");
           })();
 
-          const response = await fetch(urlV1(tenantId, queryParamStr));
+          const response = await fetch(urlV3(tenantId, queryParamStr));
 
           if (response.ok) {
             const responseJson = await response.json();

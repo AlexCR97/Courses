@@ -7,6 +7,7 @@ public interface IFindQuery
     public int Page { get; }
     public int Size { get; }
     public Sort? Sort { get; }
+    public string? Search { get; }
 }
 
 public record FindQuery : IFindQuery
@@ -21,24 +22,28 @@ public record FindQuery : IFindQuery
     public FindQuery(
         int page,
         int size,
-        Sort? sort)
+        Sort? sort,
+        string? search)
     {
         Page = page;
         Size = size;
         Sort = sort;
+        Search = search;
         new Validator().ValidateAndThrow(this);
     }
 
     public int Page { get; init; }
     public int Size { get; init; }
     public Sort? Sort { get; init; }
+    public string? Search { get; init; }
 
     public static FindQuery Create(
         int page = PageDefault,
         int size = SizeDefault,
-        Sort? sort = null)
+        Sort? sort = null,
+        string? search = null)
     {
-        return new FindQuery(page, size, sort);
+        return new FindQuery(page, size, sort, search);
     }
 
     private class Validator : AbstractValidator<FindQuery>
@@ -79,7 +84,7 @@ public readonly struct Sort
     private string Value { get; }
 
     private string[] SortParts => Value.Split(' ');
-    
+
     public string SortBy => SortParts[0];
 
     public SortOrder SortOrder => SortParts
