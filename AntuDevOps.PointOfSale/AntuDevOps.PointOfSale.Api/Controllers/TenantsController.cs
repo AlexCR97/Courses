@@ -56,13 +56,62 @@ public class TenantsController : ControllerBase
         [FromRoute] int tenantId,
         [FromQuery] int page = FindQuery.PageDefault,
         [FromQuery] int size = FindQuery.SizeDefault,
-        [FromQuery] string? sort = null)
+        [FromQuery] string? sort = null,
+        [FromQuery] string? search = null)
     {
         var products = await _sender.Send(new FindProductsQuery(
             new TenantId(tenantId),
             page,
             size,
-            Sort.ParseOrDefault(sort)));
+            Sort.ParseOrDefault(sort),
+            search));
+
+        var response = products.Map(x => x.ToListResponse());
+
+        return Ok(response);
+    }
+
+    [HttpGet("{tenantId:int}/products/v2")]
+    public async Task<OkObjectResult> FindProductsV2(
+        [FromRoute] int tenantId,
+        [FromQuery] int page = FindQuery.PageDefault,
+        [FromQuery] int size = FindQuery.SizeDefault,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? code = null,
+        [FromQuery] string? displayName = null)
+    {
+        var products = await _sender.Send(new FindProductsQuery(
+            new TenantId(tenantId),
+            page,
+            size,
+            Sort.ParseOrDefault(sort),
+            new AndExpression()
+                .And(ContainsExpression.For("code", code))
+                .And(ContainsExpression.For("displayName", displayName))
+                .BuildExpression()));
+
+        var response = products.Map(x => x.ToListResponse());
+
+        return Ok(response);
+    }
+
+    [HttpGet("{tenantId:int}/products/v3")]
+    public async Task<OkObjectResult> FindProductsV3(
+        [FromRoute] int tenantId,
+        [FromQuery] int page = FindQuery.PageDefault,
+        [FromQuery] int size = FindQuery.SizeDefault,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? search = null)
+    {
+        var products = await _sender.Send(new FindProductsQuery(
+            new TenantId(tenantId),
+            page,
+            size,
+            Sort.ParseOrDefault(sort),
+            new OrExpression()
+                .Or(ContainsExpression.For("code", search))
+                .Or(ContainsExpression.For("displayName", search))
+                .BuildExpression()));
 
         var response = products.Map(x => x.ToListResponse());
 

@@ -10,7 +10,7 @@ internal static class PaginationExtensions
     {
         return queryable
             .Sort(findQuery.Sort)
-            // TODO Search
+            .Search(findQuery.Search)
             .Paginate(findQuery.Page, findQuery.Size);
     }
 
@@ -19,6 +19,13 @@ internal static class PaginationExtensions
         return sort is null
             ? queryable
             : queryable.OrderBy(sort.Value.ToString());
+    }
+
+    private static IQueryable<T> Search<T>(this IQueryable<T> queryable, string? search)
+    {
+        return string.IsNullOrWhiteSpace(search)
+            ? queryable
+            : queryable.Where(search);
     }
 
     private static IQueryable<T> Paginate<T>(this IQueryable<T> queryable, int page, int size)

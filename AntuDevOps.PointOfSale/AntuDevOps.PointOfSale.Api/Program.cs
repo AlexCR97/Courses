@@ -9,6 +9,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(cors => cors
+    .AddDefaultPolicy(policy => policy
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowAnyOrigin()));
+
 builder.Services
     .AddJwtService(builder.Configuration)
     .AddApplication()
@@ -23,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
