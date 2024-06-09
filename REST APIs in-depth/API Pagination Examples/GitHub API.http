@@ -1,0 +1,6 @@
+@username = AlexCR97
+@page=10
+@perPage = 2
+
+GET https://api.github.com/users/{{username}}/repos?page={{page}}&per_page={{perPage}}
+Content-Type: application/json

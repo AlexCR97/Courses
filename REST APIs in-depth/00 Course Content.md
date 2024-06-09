@@ -24,7 +24,7 @@ By the end of this course, students will be able to:
   - Web Resources
   - Status Codes
   - Versioning
-- "Find" requests
+- "Search" requests
   - Pagination
   - Sorting
   - Filtering
