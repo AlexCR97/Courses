@@ -1,12 +1,10 @@
 # Search Requests
 
-> **_Status Codes exercise!_**
-
 ## Pagination
 
 ### What is API pagination?
 
-API Pagination is a technique used in API design to retrieve large data sets in a manageable manner. When an endpoint returns a large amount of data, pagination allows the data to be divided into smaller chunks or "pages". Each page contains a limited number of records.
+It's a technique used to retrieve large data sets in a manageable manner. When an endpoint returns large amounts of data, pagination allows the data to be divided into smaller "pages", each with a limited number of results.
 
 **API pagination benefits:**
 
@@ -17,37 +15,37 @@ API Pagination is a technique used in API design to retrieve large data sets in 
 - Scalability and flexibility
 - Error handling
 
-**Real-world uses of pagination:**
-
-- LinkedIn uses pagination to retrieve posts and comments.
-- Amazon uses pagination to retrieve product listings, search results and user reviews.
-- Banking apps use pagination to retrieve transaction history.
-- Job search platforms like Indeed or LinkedIn Jobs offer paginated APIs for retrieving job listings based on various criteria such as location, industry, or keywords.
-
-**Real-world APIs that use search requests:**
-
-- <https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user>
-- <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-search-api-example>
-- <https://developers.google.com/photos/library/reference/rest/v1/albums/list>
-- <https://pokeapi.co/docs/v2#resource-listspagination-section>
-- <https://nominatim.org/>
-
 ### Common API pagination techniques
 
 ```text
 # Offset Limit pagination
+
 GET /api/posts?offset=0&limit=10
+```
 
+```text
 # Page-based pagination
+
 GET /api/posts?page=2&size=20
+```
 
+**Other less common techniques are:**
+
+```text
 # Cursor pagination
+
 GET /api/posts?cursor=eyJpZCI6MX0
+```
 
+```text
 # Time-based pagination
-GET /api/events?start_time=2023-01-01T00:00:00Z&end_time=2023-01-31T23:59:59Z
 
+GET /api/events?start_time=2023-01-01T00:00:00Z&end_time=2023-01-31T23:59:59Z
+```
+
+```text
 # Keyset pagination
+
 GET /api/products?last_key=XYZ123
 ```
 
@@ -55,12 +53,16 @@ GET /api/products?last_key=XYZ123
 
 Always include pagination metadata in the API response:
 
-- Total number of records
 - The current page
-- The number of pages
-- Links to the next and previous pages
+- The current size
+- The next page
+- The previous page
+- The total number of pages
+- The total number of records
 
 This metadata helps API consumers navigate through the paginated data more effectively.
+
+Example:
 
 ```json
 {
@@ -73,11 +75,12 @@ This metadata helps API consumers navigate through the paginated data more effec
     ...
   ],
   "pagination": {
-    "totalCount": 100,
-    "currentPage": 1,
+    "currentPage": 3,
+    "currentSize": 10,
+    "nextPage": 4,
+    "prevPage": 2,
     "totalPages": 10,
-    "nextPage": 2,
-    "prevPage": null
+    "totalCount": 100
   }
 }
 ```
@@ -115,6 +118,21 @@ GET /api/posts?search=funny cats
 
 GET /api/posts?term=funny cats
 ```
+
+## Real-world usage
+
+**Real-world uses of pagination:**
+
+- LinkedIn uses pagination to retrieve posts and comments.
+- Amazon uses pagination to retrieve product listings, search results and user reviews.
+- Banking apps use pagination to retrieve transaction history.
+
+**Real-world APIs that use pagination:**
+
+- <https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user>
+- <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-search-api-example>
+- <https://pokeapi.co/docs/v2#resource-listspagination-section>
+- <https://nominatim.org/>
 
 ## References
 

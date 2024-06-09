@@ -41,13 +41,25 @@ internal class ProductRepository : IProductRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<PagedResult<Product>> FindAsync(IFindQuery query, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var pagedResult = await _dbContext.Products
+            .AsQueryable()
+            .Find(query)
+            .ToPagedResultAsync(query, _dbContext.Products, cancellationToken);
+
+        return pagedResult.Map(entity => entity.ToModel());
+    }
+
     public async Task<IReadOnlyList<Product>> FindAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var entities = await _dbContext.Products.ToListAsync(cancellationToken);
+        var products = await _dbContext.Products.ToListAsync(cancellationToken);
 
-        return entities
+        return products
             .Select(entity => entity.ToModel())
             .ToList();
     }
@@ -58,6 +70,17 @@ internal class ProductRepository : IProductRepository
 
         return await GetOrDefaultAsync(id, cancellationToken)
             ?? throw new InvalidOperationException($"No such Product with Id={id}");
+    }
+
+    public async Task<Product?> GetByCodeOrDefaultAsync(string code, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var entity = await _dbContext.Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+
+        return entity?.ToModel();
     }
 
     public async Task<Product?> GetOrDefaultAsync(ProductId id, CancellationToken cancellationToken = default)

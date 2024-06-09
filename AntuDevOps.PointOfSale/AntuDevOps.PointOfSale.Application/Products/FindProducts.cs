@@ -1,21 +1,19 @@
 ﻿using AntuDevOps.PointOfSale.Domain.Models;
 using AntuDevOps.PointOfSale.Domain.Repositories;
-using FluentValidation;
 using MediatR;
 
 namespace AntuDevOps.PointOfSale.Application.Products;
 
-public record FindProductsQuery
-    : IRequest<IReadOnlyList<Product>>;
+public record FindProductsQuery(
+    TenantId TenantId,
+    int Page = FindQuery.PageDefault,
+    int Size = FindQuery.SizeDefault,
+    Sort? Sort = null,
+    string? Search = null)
+    : FindQuery(Page, Size, Sort, Search)
+    , IRequest<PagedResult<Product>>;
 
-internal class FindProductsQueryValidator : AbstractValidator<FindProductsQuery>
-{
-    public FindProductsQueryValidator()
-    {
-    }
-}
-
-internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IReadOnlyList<Product>>
+internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, PagedResult<Product>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -24,12 +22,17 @@ internal class FindProductsQueryHandler : IRequestHandler<FindProductsQuery, IRe
         _productRepository = productRepository;
     }
 
-    public async Task<IReadOnlyList<Product>> Handle(FindProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<Product>> Handle(FindProductsQuery request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        new FindProductsQueryValidator().ValidateAndThrow(request);
+        request = request with
+        {
+            Search = new AndExpression(request.Search)
+                .And($"tenantId == {request.TenantId.Value}")
+                .BuildExpression(),
+        };
 
-        return await _productRepository.FindAsync(cancellationToken);
+        return await _productRepository.FindAsync(request, cancellationToken);
     }
 }

@@ -1,0 +1,4 @@
+@search = code.contains("7")
+
+GET {{apiUrl}}/{{tenantId}}/products/v1?search={{search}}
+Content-Type: application/json

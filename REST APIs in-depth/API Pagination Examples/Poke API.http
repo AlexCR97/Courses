@@ -1,4 +1,4 @@
-@offset = 0
+@offset = 3
 @limit = 3
 
 GET https://pokeapi.co/api/v2/pokemon?offset={{offset}}&limit={{limit}}
