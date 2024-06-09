@@ -8,8 +8,9 @@ public record FindWarehousesQuery(
     TenantId TenantId,
     int Page = FindQuery.PageDefault,
     int Size = FindQuery.SizeDefault,
-    Sort? Sort = null)
-    : FindQuery(Page, Size, Sort)
+    Sort? Sort = null,
+    string? Search = null)
+    : FindQuery(Page, Size, Sort, Search)
     , IRequest<PagedResult<Warehouse>>;
 
 internal class FindWarehousesQueryHandler : IRequestHandler<FindWarehousesQuery, PagedResult<Warehouse>>

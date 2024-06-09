@@ -8,8 +8,9 @@ public record FindOrderSnapshotsQuery(
     TenantId TenantId,
     int Page = FindQuery.PageDefault,
     int Size = FindQuery.SizeDefault,
-    Sort? Sort = null)
-    : FindQuery(Page, Size, Sort)
+    Sort? Sort = null,
+    string? Search = null)
+    : FindQuery(Page, Size, Sort, Search)
     , IRequest<PagedResult<OrderSnapshot>>;
 
 internal class FindOrderSnapshotsQueryHandler : IRequestHandler<FindOrderSnapshotsQuery, PagedResult<OrderSnapshot>>
