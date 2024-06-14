@@ -1,10 +1,16 @@
+using AntuDevOps.PointOfSale.Api.Errors;
+using AntuDevOps.PointOfSale.Api.Filters;
+using AntuDevOps.PointOfSale.Api.Middlewares;
 using AntuDevOps.PointOfSale.Api.OAuth;
 using AntuDevOps.PointOfSale.Application.DependencyInjection;
 using AntuDevOps.PointOfSale.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    //options.Filters.Add<ExceptionFilter>();
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -20,15 +26,25 @@ builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
+//builder.Services.AddSingleton<ExceptionMiddleware>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+builder.Services.AddErrorResponse(builder.Configuration);
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+//app.UseExceptionHandler("/error");
+
+app.UseExceptionHandler();
 
 app.UseCors();
 

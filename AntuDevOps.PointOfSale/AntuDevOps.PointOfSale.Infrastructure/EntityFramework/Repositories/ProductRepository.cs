@@ -1,4 +1,5 @@
-﻿using AntuDevOps.PointOfSale.Domain.Models;
+﻿using AntuDevOps.PointOfSale.Domain.Exceptions;
+using AntuDevOps.PointOfSale.Domain.Models;
 using AntuDevOps.PointOfSale.Domain.Repositories;
 using AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ internal class ProductRepository : IProductRepository
         var entity = model.ToEntity();
 
         await _dbContext.Products.AddAsync(entity, cancellationToken);
-        
+
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return new ProductId(entity.Id);
@@ -71,7 +72,7 @@ internal class ProductRepository : IProductRepository
         cancellationToken.ThrowIfCancellationRequested();
 
         return await GetOrDefaultAsync(id, cancellationToken)
-            ?? throw new InvalidOperationException($"No such Product with Id={id}");
+            ?? throw new NotFoundException(nameof(Product), id);
     }
 
     public async Task<Product?> GetByCodeOrDefaultAsync(string code, CancellationToken cancellationToken)

@@ -1,4 +1,5 @@
-﻿using AntuDevOps.PointOfSale.Application.Seeding;
+﻿using AntuDevOps.PointOfSale.Api.Filters;
+using AntuDevOps.PointOfSale.Application.Seeding;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
