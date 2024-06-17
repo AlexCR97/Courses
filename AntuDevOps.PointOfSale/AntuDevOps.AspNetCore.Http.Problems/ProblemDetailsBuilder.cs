@@ -39,9 +39,9 @@ public class ProblemDetailsBuilder
         return this;
     }
 
-    public ProblemDetailsBuilder WithExtensions(Dictionary<string, object?> extensions)
+    public ProblemDetailsBuilder WithExtensions(IDictionary<string, object?> extensions)
     {
-        Extensions = extensions;
+        Extensions = extensions.ToDictionary();
         return this;
     }
 
@@ -62,5 +62,22 @@ public class ProblemDetailsBuilder
             Instance = Instance,
             Extensions = Extensions.ToDictionary(),
         };
+    }
+
+    public static ProblemDetailsBuilder From(ProblemDetailsBuilder builder)
+    {
+        var problemDetails = builder.Build();
+        return From(problemDetails);
+    }
+
+    public static ProblemDetailsBuilder From(ProblemDetails problemDetails)
+    {
+        return new ProblemDetailsBuilder()
+            .WithType(problemDetails.Type)
+            .WithTitle(problemDetails.Title)
+            .WithStatus(problemDetails.Status)
+            .WithDetail(problemDetails.Detail)
+            .WithInstance(problemDetails.Instance)
+            .WithExtensions(problemDetails.Extensions);
     }
 }

@@ -26,45 +26,33 @@ public class ProblemDetailsResolver : IProblemDetailsResolver
     {
         var builder = new ProblemDetailsBuilder();
 
-        var baseContext = new ProblemDetailsContext<Exception>(
+        builder = BuildProblemDetails(builder, exception, typeof(Exception));
+
+        if (exception.GetType() != typeof(Exception))
+            builder = BuildProblemDetails(builder, exception, exception.GetType());
+
+        return builder.Build();
+    }
+
+    private ProblemDetailsBuilder BuildProblemDetails(ProblemDetailsBuilder builder, Exception exception, Type exceptionType)
+    {
+        var (factory, specificExceptionType) = GetFactoryAndExceptionType(exceptionType);
+
+        var contextType = typeof(ProblemDetailsContext<>).MakeGenericType(specificExceptionType);
+
+        var context = Activator.CreateInstance(
+            contextType,
             _problemDetailsFactoryOptions,
             _httpContextAccessor.HttpContext,
             exception,
             builder);
 
-        var (defaultFactory, _) = GetFactory(typeof(Exception));
-        GetProblemDetails(defaultFactory, baseContext);
+        var problemDetails = CreateProblemDetails(factory, context!);
 
-        if (exception.GetType() == typeof(Exception))
-        {
-            // No need to intercept exception further
-        }
-        else
-        {
-            var (factory, exceptionType) = GetFactory(exception.GetType());
-
-            var problemDetailsContextType = typeof(ProblemDetailsContext<>).MakeGenericType(exceptionType);
-
-            var problemDetailsContextInstance = Activator.CreateInstance(
-                problemDetailsContextType,
-                _problemDetailsFactoryOptions,
-                _httpContextAccessor.HttpContext,
-                exception,
-                builder);
-
-            //var genericContext = new ProblemDetailsContext<TException>(
-            //    _problemDetailsFactoryOptions,
-            //    _httpContextAccessor.HttpContext,
-            //    exception,
-            //    builder);
-
-            GetProblemDetails(factory, problemDetailsContextInstance);
-        }
-
-        return builder.Build();
+        return ProblemDetailsBuilder.From(problemDetails);
     }
 
-    private (object Factory, Type Type) GetFactory(Type? exceptionType)
+    private (object Factory, Type Type) GetFactoryAndExceptionType(Type? exceptionType)
     {
         ArgumentNullException.ThrowIfNull(exceptionType);
 
@@ -74,33 +62,19 @@ public class ProblemDetailsResolver : IProblemDetailsResolver
         if (factory is not null)
             return (factory, exceptionType);
 
-        return GetFactory(exceptionType.BaseType);
+        return GetFactoryAndExceptionType(exceptionType.BaseType);
     }
 
-    private ProblemDetails GetProblemDetails<TException>(object problemDetailsFactory, ProblemDetailsContext<TException> context)
-        where TException : Exception
+    private static ProblemDetails CreateProblemDetails(object problemDetailsFactory, object problemDetailsContext)
     {
-        var problemDetails = problemDetailsFactory
-            ?.GetType()
-            ?.GetMethod(nameof(IProblemDetailsFactory<TException>.CreateProblemDetails))
-            ?.Invoke(problemDetailsFactory, new[] { context });
-
-        if (problemDetails is not null)
-            return (ProblemDetails)problemDetails;
-
-        throw new InvalidOperationException(@$"Could not get problem details using factory ""{problemDetailsFactory!.GetType().Name}"" and exception ""{context.GetType().Name}"".");
-    }
-
-    private ProblemDetails GetProblemDetails(object problemDetailsFactory, object context)
-    {
-        var problemDetails = problemDetailsFactory
+        var problemDetailsObj = problemDetailsFactory
             ?.GetType()
             ?.GetMethod(nameof(IProblemDetailsFactory<Exception>.CreateProblemDetails))
-            ?.Invoke(problemDetailsFactory, new[] { context });
+            ?.Invoke(problemDetailsFactory, new[] { problemDetailsContext });
 
-        if (problemDetails is not null)
-            return (ProblemDetails)problemDetails;
+        if (problemDetailsObj is ProblemDetails problemDetails)
+            return problemDetails;
 
-        throw new InvalidOperationException(@$"Could not get problem details using factory ""{problemDetailsFactory!.GetType().Name}"" and exception ""{context.GetType().Name}"".");
+        throw new InvalidOperationException(@$"Could not create {nameof(ProblemDetails)} using factory ""{problemDetailsFactory!.GetType().Name}"" and context ""{problemDetailsContext.GetType().Name}"".");
     }
 }
