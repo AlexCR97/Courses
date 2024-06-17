@@ -1,27 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace AntuDevOps.AspNetCore.Http.Problems;
 
-public interface IProblemDetailsFactory;
-
-public interface IProblemDetailsFactory<TException> : IProblemDetailsFactory
+public interface IProblemDetailsFactory<TException>
     where TException : Exception
 {
     ProblemDetails CreateProblemDetails(ProblemDetailsContext<TException> context);
 }
 
 public record ProblemDetailsContext<TException>(
-    ProblemDetailsFactoryOptions Options,
+    IConfiguration? Configuration,
     HttpContext? HttpContext,
     TException Exception,
     ProblemDetailsBuilder Problem);
-
-public record ProblemDetailsFactoryOptions(
-    bool IncludeException)
-{
-    public static ProblemDetailsFactoryOptions Default()
-    {
-        return new ProblemDetailsFactoryOptions(
-            IncludeException: false);
-    }
-}

@@ -1,4 +1,6 @@
-﻿namespace AntuDevOps.AspNetCore.Http.Problems;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace AntuDevOps.AspNetCore.Http.Problems;
 
 public class ExceptionProblemDetailsFactory : IProblemDetailsFactory<Exception>
 {
@@ -11,7 +13,9 @@ public class ExceptionProblemDetailsFactory : IProblemDetailsFactory<Exception>
             .WithDetail(context.Exception.Message)
             .WithInstance(context.HttpContext?.Request.Path);
 
-        if (context.Options.IncludeException)
+        var options = ToOptions(context.Configuration);
+
+        if (options.IncludeException)
         {
             context.Problem.WithExtension("exception", new
             {
@@ -22,5 +26,22 @@ public class ExceptionProblemDetailsFactory : IProblemDetailsFactory<Exception>
         }
 
         return context.Problem.Build();
+    }
+
+    private static Options ToOptions(IConfiguration? configuration)
+    {
+        var options = Options.Default();
+        configuration?.Bind(options);
+        return options;
+    }
+
+    private record Options(
+        bool IncludeException)
+    {
+        public static Options Default()
+        {
+            return new Options(
+                IncludeException: false);
+        }
     }
 }

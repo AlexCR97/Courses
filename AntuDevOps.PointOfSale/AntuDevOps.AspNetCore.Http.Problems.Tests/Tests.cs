@@ -1,4 +1,5 @@
 using AntuDevOps.AspNetCore.Http.Problems.DependencyInjection;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features;
@@ -30,12 +31,16 @@ public class Tests
         var problemDetailsResolver = services.GetRequiredService<IProblemDetailsResolver>();
 
         var exceptionProblemDetails = problemDetailsResolver.Resolve(new Exception("This is a test Exception!"));
+        exceptionProblemDetails.Title.Should().Match("Unknown");
 
         var parentExceptionProblemDetails = problemDetailsResolver.Resolve(new CustomParentException());
+        parentExceptionProblemDetails.Title.Should().Match("Parent!");
 
         var childFooExceptionProblemDetails = problemDetailsResolver.Resolve(new CustomChildFooException());
+        childFooExceptionProblemDetails.Title.Should().Match("Foo!");
 
         var childBarExceptionProblemDetails = problemDetailsResolver.Resolve(new CustomChildBarException());
+        childBarExceptionProblemDetails.Title.Should().Match("Parent!");
     }
 
     private class MockHttpContextAccessor : IHttpContextAccessor

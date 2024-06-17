@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace AntuDevOps.AspNetCore.Http.Problems;
 
@@ -8,17 +9,20 @@ public interface IProblemDetailsResolver
         where TException : Exception;
 }
 
-public class ProblemDetailsResolver : IProblemDetailsResolver
+internal record ProblemDetailsResolverOptions(
+    IConfiguration? ProblemDetailsConfiguration);
+
+internal class ProblemDetailsResolver : IProblemDetailsResolver
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ProblemDetailsFactoryOptions _problemDetailsFactoryOptions;
+    private readonly ProblemDetailsResolverOptions _options;
 
-    public ProblemDetailsResolver(IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider, ProblemDetailsFactoryOptions problemDetailsFactoryOptions)
+    public ProblemDetailsResolver(IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider, ProblemDetailsResolverOptions options)
     {
         _httpContextAccessor = httpContextAccessor;
         _serviceProvider = serviceProvider;
-        _problemDetailsFactoryOptions = problemDetailsFactoryOptions;
+        _options = options;
     }
 
     public ProblemDetails Resolve<TException>(TException exception)
@@ -42,7 +46,7 @@ public class ProblemDetailsResolver : IProblemDetailsResolver
 
         var context = Activator.CreateInstance(
             contextType,
-            _problemDetailsFactoryOptions,
+            _options.ProblemDetailsConfiguration,
             _httpContextAccessor.HttpContext,
             exception,
             builder);
