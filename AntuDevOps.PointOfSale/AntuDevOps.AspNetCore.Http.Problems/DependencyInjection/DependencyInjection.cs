@@ -3,37 +3,85 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AntuDevOps.AspNetCore.Http.Problems.DependencyInjection;
 
-public static class DependencyInjection
+public interface IProblemDetailsResolverBuilder
+{
+    public IServiceCollection Services { get; }
+    public IConfiguration? Configuration { get; set; }
+    public string? ConfigurationSectionName { get; set; }
+}
+
+internal class ProblemDetailsResolverBuilder : IProblemDetailsResolverBuilder
+{
+    public ProblemDetailsResolverBuilder(IServiceCollection services, IConfiguration? configuration, string? configurationSectionName)
+    {
+        Services = services;
+        Configuration = configuration;
+        ConfigurationSectionName = configurationSectionName;
+    }
+
+    public IServiceCollection Services { get; }
+    public IConfiguration? Configuration { get; set; }
+    public string? ConfigurationSectionName { get; set; }
+
+    public void SetConfiguration(IConfiguration? configuration, string? sectionName)
+    {
+        Configuration = configuration;
+        ConfigurationSectionName = sectionName;
+    }
+
+    public static ProblemDetailsResolverBuilder Create(IServiceCollection services)
+    {
+        return new ProblemDetailsResolverBuilder(services, null, null);
+    }
+}
+
+public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddProblemDetails(
         this IServiceCollection services,
-        IConfiguration configuration,
-        string? sectionName = null)
+        Action<IProblemDetailsResolverBuilder> builder)
     {
-        return services
-            .AddProblemDetailsResolverOptions(configuration, sectionName)
-            .AddSingleton<IProblemDetailsResolver, ProblemDetailsResolver>()
-            .AddProblemDetailsFactory<Exception, ExceptionProblemDetailsFactory>();
+        var problemDetailsResolverBuilder = ProblemDetailsResolverBuilder.Create(services);
+
+        builder(problemDetailsResolverBuilder);
+
+        problemDetailsResolverBuilder
+            .AddProblemDetailsResolver()
+            .AddDefaultProblemDetailsFactory();
+
+        return services;
     }
 
-    private static IServiceCollection AddProblemDetailsResolverOptions(
-        this IServiceCollection services,
-        IConfiguration configuration,
-        string? sectionName = null)
+    public static IProblemDetailsResolverBuilder WithConfiguration(this IProblemDetailsResolverBuilder builder, IConfiguration? configuration, string? sectionName = null)
     {
-        sectionName ??= "ProblemDetails";
-
-        var problemDetailsConfiguration = configuration.GetSection(sectionName);
-
-        return services
-            .AddSingleton(new ProblemDetailsResolverOptions(problemDetailsConfiguration));
+        var specificBuilder = (ProblemDetailsResolverBuilder)builder;
+        specificBuilder.SetConfiguration(configuration, sectionName);
+        return specificBuilder;
     }
 
-    public static IServiceCollection AddProblemDetailsFactory<TException, TFactory>(this IServiceCollection services)
+    private static IProblemDetailsResolverBuilder AddProblemDetailsResolver(this IProblemDetailsResolverBuilder builder)
+    {
+        var sectionName = builder.ConfigurationSectionName ?? "ProblemDetails";
+
+        var problemDetailsConfiguration = builder.Configuration?.GetSection(sectionName);
+
+        builder.Services
+            .AddSingleton(new ProblemDetailsResolverOptions(problemDetailsConfiguration))
+            .AddSingleton<IProblemDetailsResolver, ProblemDetailsResolver>();
+
+        return builder;
+    }
+
+    private static IProblemDetailsResolverBuilder AddDefaultProblemDetailsFactory(this IProblemDetailsResolverBuilder builder)
+    {
+        return builder.AddProblemDetailsFactory<Exception, ExceptionProblemDetailsFactory>();
+    }
+
+    public static IProblemDetailsResolverBuilder AddProblemDetailsFactory<TException, TFactory>(this IProblemDetailsResolverBuilder builder)
         where TException : Exception
         where TFactory : class, IProblemDetailsFactory<TException>
     {
-        return services
-            .AddSingleton<IProblemDetailsFactory<TException>, TFactory>();
+        builder.Services.AddSingleton<IProblemDetailsFactory<TException>, TFactory>();
+        return builder;
     }
 }

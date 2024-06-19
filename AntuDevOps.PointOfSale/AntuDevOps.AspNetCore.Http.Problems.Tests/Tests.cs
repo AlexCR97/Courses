@@ -11,35 +11,67 @@ namespace AntuDevOps.AspNetCore.Http.Problems.Tests;
 
 public class Tests
 {
-    [Fact]
-    public void Test()
+    public Tests()
     {
-        var configuration = new ConfigurationBuilder()
+        Configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ProblemDetails:IncludeException"] = "true",
             })
             .Build();
+    }
 
+    private IConfiguration Configuration { get; }
+
+    [Fact]
+    public void ShouldAddResolver()
+    {
         var services = new ServiceCollection()
             .AddSingleton<IHttpContextAccessor, MockHttpContextAccessor>()
-            .AddProblemDetails(configuration)
-            .AddProblemDetailsFactory<CustomParentException, CustomParentExceptionProblemDetailsFactory>()
-            .AddProblemDetailsFactory<CustomChildFooException, CustomChildFooExceptionProblemDetailsFactory>()
+            .AddProblemDetails(_ => { })
             .BuildServiceProvider();
 
-        var problemDetailsResolver = services.GetRequiredService<IProblemDetailsResolver>();
+        var resolver = services.GetService<IProblemDetailsResolver>();
+        resolver.Should().NotBeNull();
+        resolver.Should().BeAssignableTo<IProblemDetailsResolver>();
+    }
 
-        var exceptionProblemDetails = problemDetailsResolver.Resolve(new Exception("This is a test Exception!"));
+    [Fact]
+    public void ShouldAddDefaultFactory()
+    {
+        var services = new ServiceCollection()
+            .AddSingleton<IHttpContextAccessor, MockHttpContextAccessor>()
+            .AddProblemDetails(_ => { })
+            .BuildServiceProvider();
+
+        var factory = services.GetService<IProblemDetailsFactory<Exception>>();
+        factory.Should().NotBeNull();
+        factory.Should().BeAssignableTo<IProblemDetailsFactory<Exception>>();
+    }
+
+    [Fact]
+    public void ShouldHandleExceptions()
+    {
+        var services = new ServiceCollection()
+            .AddSingleton<IHttpContextAccessor, MockHttpContextAccessor>()
+            .AddProblemDetails(builder => builder
+                .WithConfiguration(Configuration)
+                .AddProblemDetailsFactory<CustomParentException, CustomParentExceptionProblemDetailsFactory>()
+                .AddProblemDetailsFactory<CustomChildFooException, CustomChildFooExceptionProblemDetailsFactory>())
+            .BuildServiceProvider();
+
+        var resolver = services.GetRequiredService<IProblemDetailsResolver>();
+
+        var exceptionProblemDetails = resolver.Resolve(new Exception("This is a test Exception!"));
         exceptionProblemDetails.Title.Should().Match("Unknown");
 
-        var parentExceptionProblemDetails = problemDetailsResolver.Resolve(new CustomParentException());
+        var parentExceptionProblemDetails = resolver.Resolve(new CustomParentException());
         parentExceptionProblemDetails.Title.Should().Match("Parent!");
 
-        var childFooExceptionProblemDetails = problemDetailsResolver.Resolve(new CustomChildFooException());
+        var childFooExceptionProblemDetails = resolver.Resolve(new CustomChildFooException());
         childFooExceptionProblemDetails.Title.Should().Match("Foo!");
 
-        var childBarExceptionProblemDetails = problemDetailsResolver.Resolve(new CustomChildBarException());
+        var childBarExceptionProblemDetails = resolver.Resolve(new CustomChildBarException());
         childBarExceptionProblemDetails.Title.Should().Match("Parent!");
     }
 
