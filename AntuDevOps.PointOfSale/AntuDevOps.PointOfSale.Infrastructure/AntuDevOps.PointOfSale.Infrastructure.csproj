@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mongo\**" />
+    <EmbeddedResource Remove="Mongo\**" />
+    <None Remove="Mongo\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AntuDevOps.PointOfSale.Application\AntuDevOps.PointOfSale.Application.csproj" />
+    <ProjectReference Include="..\AntuDevOps.PointOfSale.Domain\AntuDevOps.PointOfSale.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +24,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.4.0" />
   </ItemGroup>
 

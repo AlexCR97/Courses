@@ -1,4 +1,5 @@
-﻿using AntuDevOps.PointOfSale.Application.Seeding;
+﻿using AntuDevOps.PointOfSale.Api.Filters;
+using AntuDevOps.PointOfSale.Application.Seeding;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,6 @@ public class ManagementController
     [HttpPost("seed")]
     public async Task Seed()
     {
-        await _sender.Send(new SeedCommand("Anonymous"));
+        await _sender.Send(new SeedCommand());
     }
 }

@@ -29,7 +29,7 @@ internal static class TenantEntityExtensions
             a.Name);
     }
 
-    public static Tenant ToModel(this TenantEntity a)
+    public static Tenant ToModel(this TenantEntity a, IReadOnlyList<TenantPreference> preferences)
     {
         return new Tenant(
             new TenantId(a.Id),
@@ -37,6 +37,7 @@ internal static class TenantEntityExtensions
             a.CreatedBy,
             a.LastModifiedAt,
             a.LastModifiedBy,
-            a.Name);
+            a.Name,
+            preferences);
     }
 }
