@@ -1,4 +1,5 @@
 ﻿using AntuDevOps.PointOfSale.Domain.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace AntuDevOps.PointOfSale.Api.Errors;
@@ -11,7 +12,7 @@ public record ErrorResponse(
 
 public interface IErrorResponseParser
 {
-    ErrorResponse Parse(Exception exception);
+    ProblemDetails Parse(Exception exception);
 }
 
 public record ErrorResponseParserOptions(
@@ -26,13 +27,15 @@ public record ErrorResponseParserOptions(
 internal class ErrorResponseParser : IErrorResponseParser
 {
     private readonly ErrorResponseParserOptions _options;
+    private readonly IHttpContextAccessor _contextAccessor; // Add this line!
 
-    public ErrorResponseParser(ErrorResponseParserOptions options)
+    public ErrorResponseParser(ErrorResponseParserOptions options, IHttpContextAccessor contextAccessor)
     {
         _options = options;
+        _contextAccessor = contextAccessor;
     }
 
-    public ErrorResponse Parse(Exception exception)
+    public ProblemDetails Parse(Exception exception)
     {
         // SOLID
         // O -> Open-Closed principle
@@ -46,13 +49,19 @@ internal class ErrorResponseParser : IErrorResponseParser
             _ => HttpStatusCode.InternalServerError,
         };
 
-        return new ErrorResponse(
-            status,
-            exception.GetType().Name,
-            exception.Message,
-            _options.IncludeStackTrace
-                ? exception.StackTrace
-                : null);
+        var problemDetails = new ProblemDetails
+        {
+            Type = "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status",
+            Title = exception.GetType().Name,
+            Status = (int)status,
+            Detail = exception.Message,
+            Instance = _contextAccessor.HttpContext?.Request.Path,
+        };
+
+        if (_options.IncludeStackTrace)
+            problemDetails.Extensions["stackTrace"] = exception.StackTrace;
+
+        return problemDetails;
     }
 }
 
