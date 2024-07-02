@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AntuDevOps.AspNetCore.Http.Problems\AntuDevOps.AspNetCore.Http.Problems.csproj" />
     <ProjectReference Include="..\AntuDevOps.PointOfSale.Application\AntuDevOps.PointOfSale.Application.csproj" />
     <ProjectReference Include="..\AntuDevOps.PointOfSale.Infrastructure\AntuDevOps.PointOfSale.Infrastructure.csproj" />
   </ItemGroup>

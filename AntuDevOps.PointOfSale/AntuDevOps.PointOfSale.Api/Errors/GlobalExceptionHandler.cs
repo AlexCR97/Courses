@@ -1,27 +1,28 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using AntuDevOps.AspNetCore.Http.Problems;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace AntuDevOps.PointOfSale.Api.Errors;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
-    private readonly IErrorResponseParser _errorResponseParser;
+    private readonly IProblemDetailsResolver _problemDetailsResolver;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IErrorResponseParser errorResponseParser)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IProblemDetailsResolver problemDetailsResolver)
     {
         _logger = logger;
-        _errorResponseParser = errorResponseParser;
+        _problemDetailsResolver = problemDetailsResolver;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         _logger.LogWarning("An error occurred :(");
 
-        var errorResponse = _errorResponseParser.Parse(exception);
+        var problemDetails = _problemDetailsResolver.Resolve(exception);
 
-        httpContext.Response.StatusCode = (int)errorResponse.Status;
+        httpContext.Response.StatusCode = problemDetails.Status ?? 500;
 
-        await httpContext.Response.WriteAsJsonAsync(errorResponse, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }
