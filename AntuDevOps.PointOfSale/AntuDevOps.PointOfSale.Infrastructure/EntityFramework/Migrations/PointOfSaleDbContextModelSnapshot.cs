@@ -22,6 +22,95 @@ namespace EntityFramework.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderLineEntity", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderLines");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderSnapshotEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderSnapshots");
+                });
+
             modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -58,6 +147,8 @@ namespace EntityFramework.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("Products");
                 });
 
@@ -92,6 +183,22 @@ namespace EntityFramework.Migrations
                         .IsUnique();
 
                     b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantPreferenceEntity", b =>
+                {
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TenantId", "Key");
+
+                    b.ToTable("TenantPreferences");
                 });
 
             modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantUserEntity", b =>
@@ -165,6 +272,187 @@ namespace EntityFramework.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.WarehouseEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Warehouses");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.WarehouseStockEntity", b =>
+                {
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("WarehouseId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("WarehouseStock");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderLineEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderEntity", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderSnapshotEntity", b =>
+                {
+                    b.OwnsMany("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.OrderLineSnapshotEntity", "Lines", b1 =>
+                        {
+                            b1.Property<int>("OrderSnapshotEntityId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("int");
+
+                            b1.HasKey("OrderSnapshotEntityId", "Id");
+
+                            b1.ToTable("OrderSnapshots");
+
+                            b1.ToJson("Lines");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderSnapshotEntityId");
+
+                            b1.OwnsOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductSnapshotEntity", "Product", b2 =>
+                                {
+                                    b2.Property<int>("OrderLineSnapshotEntityOrderSnapshotEntityId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<int>("OrderLineSnapshotEntityId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<string>("Code")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<DateTime>("CreatedAt")
+                                        .HasColumnType("datetime2");
+
+                                    b2.Property<string>("CreatedBy")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<string>("DisplayName")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<int>("Id")
+                                        .HasColumnType("int");
+
+                                    b2.Property<decimal>("Price")
+                                        .HasColumnType("decimal(18,2)");
+
+                                    b2.HasKey("OrderLineSnapshotEntityOrderSnapshotEntityId", "OrderLineSnapshotEntityId");
+
+                                    b2.ToTable("OrderSnapshots");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("OrderLineSnapshotEntityOrderSnapshotEntityId", "OrderLineSnapshotEntityId");
+                                });
+
+                            b1.Navigation("Product")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantPreferenceEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantUserEntity", b =>
                 {
                     b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
@@ -182,6 +470,36 @@ namespace EntityFramework.Migrations
                     b.Navigation("Tenant");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.WarehouseEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.TenantEntity", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.WarehouseStockEntity", b =>
+                {
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Entities.WarehouseEntity", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Warehouse");
                 });
 #pragma warning restore 612, 618
         }
