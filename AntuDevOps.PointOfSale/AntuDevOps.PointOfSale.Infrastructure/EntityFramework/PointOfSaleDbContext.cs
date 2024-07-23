@@ -10,6 +10,7 @@ internal class PointOfSaleDbContext : DbContext
     {
     }
 
+    public DbSet<LogEntity> Logs { get; set; }
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderLineEntity> OrderLines { get; set; }
     public DbSet<OrderSnapshotEntity> OrderSnapshots { get; set; }
