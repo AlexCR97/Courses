@@ -1,18 +1,22 @@
 using AntuDevOps.AspNetCore.Http.Problems.DependencyInjection;
 using AntuDevOps.PointOfSale.Api.Errors;
-using AntuDevOps.PointOfSale.Api.Filters;
-using AntuDevOps.PointOfSale.Api.Middlewares;
+using AntuDevOps.PointOfSale.Api.Logging;
 using AntuDevOps.PointOfSale.Api.OAuth;
 using AntuDevOps.PointOfSale.Application.DependencyInjection;
 using AntuDevOps.PointOfSale.Domain.Exceptions;
 using AntuDevOps.PointOfSale.Infrastructure.DependencyInjection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(options =>
+builder.Host.UseSerilog((context, services, config) =>
 {
-    //options.Filters.Add<ExceptionFilter>();
+    config
+        .ReadFrom.Configuration(context.Configuration)
+        .WriteTo.Sink(new SQLServerSink(services));
 });
+
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,8 +31,6 @@ builder.Services
     .AddJwtService(builder.Configuration)
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
-
-//builder.Services.AddSingleton<ExceptionMiddleware>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -45,16 +47,17 @@ builder.Services.AddProblemDetails(x => x
 
 var app = builder.Build();
 
-//app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-//app.UseExceptionHandler("/error");
-
 app.UseExceptionHandler();
+
+app.UseSerilogRequestLogging(options =>
+{
+    options.IncludeQueryInRequestPath = true;
+});
 
 app.UseCors();
 

@@ -1,4 +1,5 @@
-﻿using AntuDevOps.PointOfSale.Domain.Repositories;
+﻿using AntuDevOps.PointOfSale.Application.Logging;
+using AntuDevOps.PointOfSale.Domain.Repositories;
 using AntuDevOps.PointOfSale.Infrastructure.EntityFramework.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +11,7 @@ public static class DependencyInjection
 {
     internal static IServiceCollection AddEntityFramework(this IServiceCollection services, IConfiguration configuration)
     {
-        return services
+        services
             .AddDbContext<PointOfSaleDbContext>(options =>
             {
                 var connectionString = configuration.GetRequiredSection("ConnectionStrings:Localhost").Value;
@@ -25,5 +26,9 @@ public static class DependencyInjection
             .AddTransient<ITenantRepository, TenantRepository>()
             .AddTransient<IUserRepository, UserRepository>()
             .AddTransient<IWarehouseRepository, WarehouseRepository>();
+
+        services.AddScoped<ILogWriter, LogWriter>();
+
+        return services;
     }
 }
